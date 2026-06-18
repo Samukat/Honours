@@ -1,0 +1,154 @@
+%--------------------
+% Packages
+% -------------------
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+%\usepackage{gentium}
+\usepackage{mathptmx} % Use Times Font
+\usepackage[normalem]{ulem}
+
+\usepackage[pdftex]{graphicx} % Required for including pictures
+\usepackage[swedish]{babel} % Swedish translations
+\usepackage[pdftex,linkcolor=black,pdfborder={0 0 0}]{hyperref} % Format links for pdf
+\usepackage{calc} % To reset the counter in the document after title page
+\usepackage{enumitem} % Includes lists
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{tcolorbox}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{parskip}
+
+
+\frenchspacing % No double spacing between sentences
+\linespread{1.2} % Set linespace
+\usepackage[a4paper, lmargin=0.1666\paperwidth, rmargin=0.1666\paperwidth, tmargin=0.1111\paperheight, bmargin=0.1111\paperheight]{geometry} %margins
+%\usepackage{parskip}
+
+\usepackage[all]{nowidow} % Tries to remove widows
+\usepackage[protrusion=true,expansion=true]{microtype} % Improves typography, load after fontpackage is selected
+
+
+
+%-----------------------
+% Set pdf information and add title, fill in the fields
+%-----------------------
+\hypersetup{ 	
+pdfsubject = {},
+pdftitle = {},
+pdfauthor = {}
+}
+
+%-----------------------
+% Begin document
+%-----------------------
+\begin{document}
+
+\section{Legend for later use:}
+
+In this section we will begin by outlining some of the common notation with futher notation introduced in the litrature review.
+...
+
+Suppose that we have a statistical model $P_\theta \in \mathcal{P}$ with the parameters $\theta \in \Theta$ for the data points $x_{1:n} = \{x_1, x_2 \dots, x_n\}$ with theorectial and often unknown data generating process (DGP) $D(x)$. These paramaters typically(?) represent information about the data as we follow statisical methods to model the data. In frequentist statistics these paramaters $\theta$ are treated as constants \sout{post learning} ( need a better term than learning ), however, when dealing with the bayesian approach, the paramaters are treated as random variables / distirbutions. In the most standard bayes we have the  posterior density $$\pi_B(\theta | x_{1:n}) = \frac{\pi(\theta) L(x_{1:n}|\theta)}{m(x_{1:n})}\text{.}$$
+Where $\pi(\theta)$ is our prior knowlage of the paramaters $\theta$ and $\pi_B(\theta | x_{1:n})$ is the pdf of the distribution $\theta | x_{1:n}$. The $B$ here indicating that this is the standard bayesian posterior. Here $m(x_{1:n}) = \int_{\Theta} L(x_{1:n} | \theta) d\pi(\theta)$ is the marginal normalising constant of the distribution, whoese computation often makes the distribution intractable.
+
+Bayesian inference \sout{using the this method} is conceptually and practially appealing as, unlike frequentist statistic methods, we are able to allow our previous knowlage, specific domain expertiese and experts in the subject manor to further inform our distrubuiton. This injection of previous knowlage comes in the form of a carfully specified prior $\pi(\theta)$. Naturally, this comes with the potentail rist of poor prior choise. $$\dots$$
+
+Further, bayesian posteriors producing belief distribuitons (as opposed to point estiamates, as an example, the direct outputs of MLE) over the paramaters of interest $\theta \in \Theta$.
+This has the advantage that, during inference where we intergrate across the posterior $\pi_B(\theta | x_{1:n})$...
+THIS NEEDS CONTUNUISNG ABOUT THE BENIFIT OF THE POSTERIOR HABVING belief distirbutions over normal point estimates. namely that we are able to "quantify Uncertainty" (this is not true / im not too sure we need a paper for this, however, we do know that it enables) the distributions have the ability to not be over-confident in our *best*(make a [1] here noting that *best* here refrers to the best of other point estimates), as rather than using a single value of $\theta \in \Theta$ we use can make a preduction through a conventional Bayesian approach to prediction uses the posterior distribution to integrate out parameters in a density for unobserved data conditional on the observed data:
+\begin{enumerate}
+    \item itnergrate over the model $P_theta$ to get an output of the model.
+    \item Intergrate over a target with standard items of the disribtuion such as $\hat{\theta} = \int \theta d\pi_B = \int \theta \pi_B(\theta | x_{1:n} ) d\theta$
+\end{enumerate}
+
+
+
+
+In typical bayes the $L(x | \theta)$ is the likelyhood of the data
+and
+parameters.
+bruh
+
+Mobing to a more generaliseed bayes and we can change this to an optimisation centric approach. generalised bayes moves the likelihood to a into a loss function that is raied in an exponential.
+
+\begin{align*}
+    \pi_{w}(\theta \mid x_{1:n}) & = \frac{\exp\big\{-w\sum_{i=1}^{n}\ell(\theta, x_i)\big\}\,\pi(\theta)}{\displaystyle\int_{\Theta}\exp\big\{-w\sum_{i=1}^{n}\ell(\theta, x_i)\big\}\,\pi(\theta)\,d\theta} \\
+                                 & \propto \exp\big\{-w\sum_{i=1}^{n}\ell(\theta, x_i)\big\}\,\pi(\theta)
+\end{align*}
+
+
+where once again there is a normaliser in the denominator that without we can find the distribution up to proportionality. Here alos exists a $w\in\mathbb{R}$ that represents a learning rate/ loss scare. This posterior is the Bissiri-Holmes-Walker (2016) Gibbs posterior.
+
+It is important to note here that from this posterior re can revocer our previous standard bayes posteror $\pi_{B}$ in the soecific case with $\ell(\theta, x_i) = -\log p(x_i | \theta)$ and the learning rate as $w = 1$. Following this we get
+\begin{align*}
+    \pi_w(\theta \mid x_{1:n}) & \propto \exp\!\Big\{-w\sum_{i=1}^{n}\ell(\theta, x_i)\Big\}\pi(\theta) \\
+                               & = \exp\!\Big\{\sum_{i=1}^{n}\log p(x_i \mid \theta)\Big\}\pi(\theta)   \\
+                               & = \Big(\prod_{i=1}^{n} p(x_i \mid \theta)\Big)\pi(\theta)              \\
+                               & = L(x_{1:n}\mid\theta)\,\pi(\theta)
+\end{align*}
+And further the noramlising constant recovers the marginal likehood in the same manor. Hence we reocer $\pi_B(\theta | x_{1:n})$.
+
+Asside on the added learning rate term:
+Looking at the learning rate $w$ here, we can see this as as weighting between the prior and the data and a method against model misspecification. assuming that the prior is well specified. It acts as a aeffective-sample-size multiplier effecivly updating the the proir with only $wN$ data points 
+The effect of this learning rate is exact and analytic and \textit{does} effect the final distribution of the posterior, whilst depeding on the alogrithm can have an effect on the alogrithm that approximates it.*
+*note that is if the anlgoithm is not an analytical solver, it is also different from the alogrithmic step size in an optimiser.
+*Later with actual step sizes in optimsers, we will not have this clean split between the data weight and the optimisers effect on the distribution. 
+
+Further notes on the loss function, coherence and moving to an optimstaion statement:
+Bissiri, Holmes $\&$ Walker have a heavy emphais on cohereance which esstaiates that $\text{... update rule for cohereence... }$ *etc on importance. Not all loss funcitons hold to this as while the standard log loss does, as we build up to other ones this may not hold. 
+The paper breaks down the Often, researchers are only interested in a simple, low-dimensional statistic, such as a population mean or median.
+In standard Bayesian frameworks, estimating these simple statistics frustratingly still requires modeling the entire data distribution. Furthermore, some parameters of interest do not directly index any standard parametric family of density functions. (ADD IN STATEMENT ABOUT HOW IN OUR CASE FOR THE PAPER WE ARE interested in the full posterior as it is still good and need). An example is using an absolute error loss function to robustly estimate a population median without specifying a distribution. (Can this still surcome to model misspecification?) (Can we also do an eventual link here to Posteior oriented prediction, would the analyical result be the same if we aimed for something similar?)
+
+Here there is also a pivot ... ADD IN HOW THIS STARTS TO PIVOT TO OPTIMATION CENTRIC. vuiew .
+
+Knoblauch et al. generalise this into a triple of loss $\ell$ diveregence nad a feasible set $\Pi$ of distributions to optimise over \dots
+
+
+
+
+
+
+
+There are a few requirements this must have
+
+
+
+(A general framework for updating belief distributions (Bissiri et al.))
+
+\section{Lit review}
+
+
+\begin{enumerate}
+    \item \textbf{Foundations of Belief asd Updating \& Variational Inference}
+          \begin{itemize}
+              \item A general framework for updating belief distributions (Bissiri et al.)
+              \item Stochastic Variational Inference
+              \item An optimisation-centric view on Bayes' rule: Reviewing and generalising variational inference (Knoblauch et al.)
+          \end{itemize}
+
+    \item \textbf{The Shift to Predictively Oriented Posteriors}
+          \begin{itemize}
+              \item Predictive Variational Inference: Learning the predictively optimal posterior distribution
+              \item Predictive Variational Inference for flexible regression models
+              \item Predictively Oriented Posteriors (McLatchie et al.)
+          \end{itemize}
+
+    \item \textbf{Particle-Based Inference, MMD, and Misspecification}
+          \begin{itemize}
+              \item Stein Variational Gradient Descent (Liu \& Wang) (Very quick mention) and time complexity things
+              \item Prediction-Centric Uncertainty Quantification via MMD (Shen et al.)
+              \item maybe: (Detecting model misspecification in Bayesian inverse problems via variational gradient descent)
+          \end{itemize}
+
+    \item \textbf{Variational Inference with Normalising Flows?? Adaptive Heterogeneous Mixtures of Normalising Flows for Robust Variational Inference?? And more MOE papers...}
+\end{enumerate}
+
+
+(A general framework for updating belief distributions, Bissiri et al.)
+\end{document}
