@@ -52,26 +52,25 @@ pdfauthor = {}
 
 \section{Legend for later use:}
 
-In this section we will begin by outlining some of the common notation with further notation introduced in the literature review.
-\dots
+\dele{In this section we will begin by outlining some of the common notation with further notation introduced in the literature review.
+    \dots}
+
+At the core of statistical inference is the challenge of mathematically capturing the structure and uncertainty inherent in observed data. \dots
 
 Suppose that we have a statistical model $P_\theta \in \mathcal{P}$, where $\mathcal{P} = \{P_\theta : \theta \in \Theta\}$, with the parameters $\theta \in \Theta$ for the data points $x_{1:n} = \{x_1, x_2 \dots, x_n\}$ with a theoretical and often unknown data generating process (DGP) $D(x)$.
-\dele{These parameters typically(?) represent information about the data as we follow statistical methods to model the data.} The parameters $\theta$ index the candidate distributions used to describe the data, with their specific values typically encoding information about the data itself.
-In frequentist statistics these parameters $\theta$ are treated as \dele{constants post learning ( need a better term than learning )}
-\add{fixed but unknown constants}, however, when dealing with the Bayesian approach, the parameters are treated as random variables / distributions. In the most standard Bayes we have the posterior density $$\pi_B(\theta \mid x_{1:n}) = \frac{\pi(\theta) L(x_{1:n}\mid\theta)}{m(x_{1:n})}\text{.}$$
-Where $\pi(\theta)$ is our prior knowledge of the parameters $\theta$ and $\pi_B(\theta \mid x_{1:n})$ is the pdf of the distribution $\theta \mid x_{1:n}$. The $B$ here indicating that this is the standard Bayesian posterior. Here $m(x_{1:n}) = \int_{\Theta} L(x_{1:n} \mid \theta)\, d\pi(\theta)$ is the marginal normalising constant of the distribution, whose computation often makes the distribution intractable.
+The parameters $\theta$ index the candidate distributions \dele{used to describe the data}, with their specific values typically encoding information about the data itself.
+In frequentist statistics these parameters $\theta$ are treated as fixed but unknown constants, however, when dealing with the Bayesian approach, the parameters are treated as random variables / distributions. In the most standard Bayes we have the posterior density $$\pi_B(\theta \mid x_{1:n}) = \frac{\pi(\theta) L(x_{1:n}\mid\theta)}{m(x_{1:n})}\text{.}$$
+Where $\pi(\theta)$ is our prior knowledge of the parameters $\theta$, $L(x_{1:n} \mid \theta)$ is the likelihood function representing the probability of the observed data under those parameters, and $\pi_B(\theta \mid x_{1:n})$ is the pdf of the distribution $\theta \mid x_{1:n}$. The $B$ here indicating that this is the standard Bayesian posterior. Here $m(x_{1:n}) = \int_{\Theta} L(x_{1:n} \mid \theta)\, d\pi(\theta)$ is the marginal normalising constant of the distribution, whose computation often makes the distribution intractable.
 
 Bayesian inference is conceptually and practically appealing as, unlike frequentist statistical methods, we are able to allow our previous knowledge, specific domain expertise and experts in the subject matter to further inform our distribution. This injection of previous knowledge comes in the form of a carefully specified prior $\pi(\theta)$. Naturally, this comes with the potential risk of poor prior choice. $$\dots$$
 
 Further, Bayesian posteriors produce belief distributions (as opposed to point estimates, as an example, the direct outputs of MLE) over the parameters of interest $\theta \in \Theta$.
-% [Claude] replaced your "THIS NEEDS CONTINUING..." note + broken enumerate with
-% the proper development below. This is the posterior-predictive / UQ content.
-\add{This carries two related benefits. First, prediction propagates parameter uncertainty rather than conditioning on a single value of $\theta$: the conventional Bayesian predictive density for an unobserved $x_{\text{new}}$ integrates the model over the posterior,
-    $$p(x_{\text{new}} \mid x_{1:n}) = \int_{\Theta} p(x_{\text{new}} \mid \theta)\,\pi_B(\theta \mid x_{1:n})\,d\theta.$$
-    Second, any quantity of interest is recovered as a functional of the posterior --- for instance the posterior mean $\hat{\theta} = \int_{\Theta} \theta\,\pi_B(\theta \mid x_{1:n})\,d\theta$, or a credible interval. Because inference averages over $\theta$ instead of fixing it at a single best\footnote{Here \emph{best} refers to the best available point estimate of $\theta$, e.g. the MLE or MAP.} value, the resulting predictions are less prone to the over-confidence of a plug-in point estimate.}
+%replaced "THIS NEEDS CONTINUING..." note + broken enumerate with
 
-\dele{In typical bayes the $L(x | \theta)$ is the likelyhood of the data and parameters. bruh}
-\add{In standard Bayes, $L(x_{1:n}\mid\theta)$ denotes the likelihood of the data given the parameters.}
+% the proper development below. This is the posterior-predictive / UQ content.
+This carries two related benefits. First, prediction propagates parameter uncertainty rather than conditioning on a single value of $\theta$; where the conventional Bayesian predictive density for an unobserved $x_{\text{new}}$ integrates the model over the posterior,
+$$p(x_{\text{new}} \mid x_{1:n}) = \int_{\Theta} p(x_{\text{new}} \mid \theta)\,\pi_B(\theta \mid x_{1:n})\,d\theta.$$
+Second, any quantity of interest is recovered as a functional of the posterior, for instance the posterior mean $\hat{\theta}$ is recovered as $\int_{\Theta} \theta\,\pi_B(\theta \mid x_{1:n})\,d\theta$. Because inference averages over $\theta$ instead of fixing it at a single best\footnote{Here \emph{best} refers to the best available point estimate of $\theta$, e.g. the MLE or MAP.} value, the resulting predictions are less prone to the over-confidence of a plug-in point estimate.
 
 Moving to a more generalised Bayes, we can \dele{change this to}\add{recast inference as} an optimisation-centric approach. Generalised Bayes replaces the likelihood with a loss function raised in an exponential.
 
@@ -89,7 +88,7 @@ It is important to note here that from this posterior we can recover our previou
                                & = \Big(\prod_{i=1}^{n} p(x_i \mid \theta)\Big)\pi(\theta)              \\
                                & = L(x_{1:n}\mid\theta)\,\pi(\theta)
 \end{align*}
-And further the normalising constant recovers the marginal likelihood in the same manner. Hence we recover $\pi_B(\theta \mid x_{1:n})$. \add{So standard Bayes is not a separate paradigm but the single coordinate $(\ell = \text{log loss},\, w = 1)$ inside the generalised family; generalised Bayes is a strict generalisation of it.}
+And further the normalising constant recovers the marginal likelihood in the same manner. Hence we recover $\pi_B(\theta \mid x_{1:n})$. \add{So standard Bayes is not a separate paradigm but a single specific instance of a more generalised approach where $\ell = \text{log loss},\ $ and $w = 1$}.
 
 \subsection*{\add{Aside: the learning rate $w$}}
 Looking at the learning rate $w$ here, we can see this as a weighting between the prior and the data, and a guard against model misspecification (assuming the prior is well specified). It acts as an effective-sample-size multiplier, effectively updating the prior with only $wn$ data points. \add{The limiting behaviour makes this concrete:
@@ -98,17 +97,96 @@ Looking at the learning rate $w$ here, we can see this as a weighting between th
         w = 1,\ \text{log loss} : \ \pi_w = \pi_B; \qquad
         w \to \infty : \ \pi_w \to \delta_{\hat{\theta}},\ \ \hat{\theta} = \arg\min_{\theta}\textstyle\sum_i \ell(\theta, x_i).
     $$}
-The effect of this learning rate is exact and analytic and \emph{does} affect the final distribution of the posterior \add{--- $w$ is part of the target distribution itself, not of any algorithm used to approximate it}. This should be held separate from the step size of an optimiser, which (for a non-analytic solver) governs the trajectory toward a fixed target rather than the target. \add{We flag this distinction now because it does not survive intact later: once the posterior is itself defined as the solution of a particle optimisation (PVI), the data-weight and the optimiser's effect on the realised distribution no longer cleanly separate --- a point we return to in Section~\ref{sec:pvi}.}
+The effect of this learning rate is exact and analytic and \emph{does} affect the final distribution of the posterior. \add{Here $w$ is part of the target distribution itself, not of any algorithm used to approximate it}. This should be held separate from the step size of an optimiser, which (for a non-analytic solver) governs the trajectory toward a fixed target rather than the target. \add{This distinction is flagged now because as later this property is altered. Once the posterior is itself defined as the solution of a particle optimisation (PVI), the data-weight and the optimiser's effect on the realised distribution no longer cleanly separate. Further discussed in Section~\ref{sec:pvi}.}
 
 \subsection*{\add{Coherence and the loss-based view}}
-\add{Bissiri, Holmes \& Walker do not posit the exponentiated-loss form; they derive it from a \emph{coherence} requirement on how beliefs may be updated. Coherence demands that the update be self-consistent under partitioning of the data: updating on a first batch and then on a second must yield the same belief as updating on the pooled sample at once, so that the order and grouping of the data cannot change our conclusions. For an additive loss they show the unique update satisfying this is the Gibbs posterior above. This matters going forward because coherence is a property of the loss: the self-information (log) loss satisfies it, but as we adopt richer, predictive and discrepancy-based losses later, coherence is no longer automatic and must be checked rather than assumed.}
+Bissiri, Holmes \& Walker do not posit the exponentiated-loss form; they derive it from a \emph{coherence} requirement on how beliefs may be updated. Coherence demands that the update be self-consistent under partitioning of the data: updating on a first batch and then on a second must yield the same belief as updating on the pooled sample at once, so that the order and grouping of the data cannot change our conclusions. An update with $(x_1, x_2)$ together or $\{(x_1), (x_2)\}$ separatatly yeilds the same result. This coherence property can be formally expressed as $$\psi[l(\theta, x_2), \psi\{l(\theta, x_1),\pi(x)\}]=\psi\{l(\theta, x_2), + l(\theta, x_1),\pi(x)\}\text{,}$$ where the function $\psi$ is the update function such that in the standard case
+\[
+    \pi(\theta \mid x) \equiv \psi \{l(\theta; x), \pi(\theta)\}.
+\]
+For an additive loss they show the unique update satisfying this is the Gibbs posterior above. This matters going forward because coherence is a property of the loss: the self-information (log) loss satisfies it, but as we adopt richer, predictive and discrepancy-based losses later, coherence is no longer automatic and must be checked rather than assumed.
 
-A further motivation for the loss-based view is that researchers are often interested only in a simple, low-dimensional statistic, such as a population mean or median. In standard Bayesian frameworks, estimating these simple statistics frustratingly still requires modelling the entire data distribution. Furthermore, some parameters of interest do not directly index any standard parametric family of density functions. \add{A loss connects parameter to data directly: an absolute-error loss, for example, identifies the population median robustly without committing to a distributional form.} % [Claude] your note: "ADD IN STATEMENT ABOUT HOW IN OUR CASE WE ARE interested in the full posterior" -- I left this as a bracket for you, since the justification is your thesis claim and shouldn't be put in your mouth:
-\add{\textbf{[your statement here:} in our setting we nonetheless retain the full posterior rather than a single functional, because \dots\textbf{]}}
-% [Claude] your questions -- worth a footnote or a sentence later, not the lit review body:
-% (i) "Can absolute-error-loss inference still succumb to misspecification?" -- yes; a robust loss limits but does not remove sensitivity to the DGP.
-% (ii) "Link to predictively-oriented posteriors?" -- good forward pointer to Section 2.
+Some of the motivation for the loss-based view is that one may often only be interested in a simple, low-dimensional statistic, such as a population mean or median. In standard Bayesian frameworks, estimating these simple statistics typically (As in $pi_B$) requires modelling the entire data distribution. Furthermore, some parameters of interest do not directly index any standard parametric family of density functions. (update / check mroe LATER) \add{A loss can connect a parameter to data directly}
+\add{In our setting later on, we nonetheless retain the full posterior rather than a single functional, as \dots}
 
+\footnote{absolute-error-loss inference can still succumb to misspecification, a robust loss limits but does not remove sensitivity to the DGP}
+\footnote{Link to PrOs, also the problem of w}
+
+
+
+\subsection*{\add{The optimisation-centric view and the Rule of Three}}
+The generalised bayes posterior $\pi_w$ has an equivalent expression focusing more on the optimisation side. In Knoblauch, Jewson \& Damoulas (2022) it is shown that  \dele{and setting the multiplicative updating rule aside,} the exact posterior can equally be obtained as the solution of an infinite-dimensional optimisation problem over the space $\mathcal{P}(\Theta)$ of \emph{all} probability measures on $\Theta$. \dele{ refrences? maybe as called out :  representation they trace to Csisz\'ar (1975), Donsker \& Varadhan (1975) and Zellner (1988):}
+$$
+\pi_B(\theta \mid x_{1:n}) = \arg\min_{q \in \mathcal{P}(\Theta)} \left\{ \mathbb{E}_{q}\Big[\sum_{i=1}^{n} \ell(\theta, x_i)\Big] + \mathrm{KL}(q \,\|\, \pi) \right\}, \qquad \ell(\theta, x_i) = -\log p(x_i \mid \theta).
+$$
+Replacing the log loss with a general $\ell$ (and absorbing the loss scale $w$ into $\ell$) returns exactly the generalised Gibbs posterior of the previous section; Bissiri et al. (2016) show the minimiser exists and coincides with $\pi_w$\footnote{Knoblauch et al.\ (2022) do not notationally distinguish the standard and generalised Bayesian posteriors, writing $q^\ast_B$ for both; here we keep them separate as $\pi_B$ and $\pi_w$.}whenever the normaliser $Z = \int_\Theta \exp\{-\sum_i \ell(\theta, x_i)\}\,\pi(\theta)\,d\theta$ is finite.
+The objective can be interpreted as regularised empirical risk minimisation; it functions in two parts, minimising the expected loss over the data while the $\mathrm{KL}$ term pulls the solution toward the prior. These are both important points that will be further discussed later on.
+It should be noted that here it is the $\mathrm{KL}$ term which causes the optimisation problem to converge to a distribution, without it the problem collapses to a point mass $\delta_{\hat\theta}$ at the empirical risk minimiser $\hat\theta = \arg\min_\theta \sum_i \ell(\theta, x_i)$. This can be seen as we derive our previous bayes posteriors from this optimisation results. 
+
+Writing $\ell_n(\theta) = \sum_{i=1}^{n}\ell(\theta,x_i)$ for the cumulative loss, let
+\[
+  Z = \int_{\Theta} \pi(\theta)\,e^{-\ell_n(\theta)}\,d\theta,
+  \qquad
+  \pi_w(\theta) = \frac{\pi(\theta)\,e^{-\ell_n(\theta)}}{Z},
+\]
+denote the normaliser and the normalised Gibbs posterior. The objective then collapses into a single $\mathrm{KL}$:
+\begin{align*}
+  \mathbb{E}_{q}\!\left[\sum_{i=1}^{n}\ell(\theta,x_i)\right] + \mathrm{KL}(q \,\|\, \pi)
+  &= \int_{\Theta} q(\theta)\,\ell_n(\theta)\,d\theta + \int_{\Theta} q(\theta)\log\frac{q(\theta)}{\pi(\theta)}\,d\theta \\
+  &= \int_{\Theta} q(\theta)\left[\log\frac{q(\theta)}{\pi(\theta)} + \ell_n(\theta)\right]d\theta \\
+  &= \int_{\Theta} q(\theta)\log\frac{q(\theta)}{\pi(\theta)\,e^{-\ell_n(\theta)}}\,d\theta
+       \quad\big(\ell_n = -\log e^{-\ell_n}\big) \\
+  &= \int_{\Theta} q(\theta)\log\frac{q(\theta)}{Z\,\pi_w(\theta)}\,d\theta \\
+  &= \mathrm{KL}(q \,\|\, \pi_w) - \log Z .
+\end{align*}
+Since $\log Z$ does not depend on $q$ and $\mathrm{KL}(q \,\|\, \pi_w) \ge 0$ with equality if and only if $q = \pi_w$, the minimiser over $\mathcal{P}(\Theta)$ is
+\[
+  \arg\min_{q \in \mathcal{P}(\Theta)}\!\left\{\mathbb{E}_{q}\!\left[\textstyle\sum_{i}\ell(\theta,x_i)\right] + \mathrm{KL}(q \,\|\, \pi)\right\}
+  = \pi_w(\theta)
+  = \frac{\pi(\theta)\exp\{-\sum_{i=1}^{n}\ell(\theta,x_i)\}}{Z}.
+\]
+Specialising to the log loss $\ell(\theta,x_i) = -\log p(x_i\mid\theta)$ gives $e^{-\ell_n(\theta)} = \prod_{i=1}^{n} p(x_i\mid\theta) = L(x_{1:n}\mid\theta)$ and $Z = \int_{\Theta}\pi(\theta)L(x_{1:n}\mid\theta)\,d\theta = m(x_{1:n})$, so that
+\[
+  \pi_w(\theta) = \frac{\pi(\theta)\,L(x_{1:n}\mid\theta)}{m(x_{1:n})} = \pi_B(\theta \mid x_{1:n}),
+\]
+recovering the standard Bayesian posterior.
+
+ Committing to the Bayesian posterior is therefore equivalent to committing to this optimisation problem: $\pi_B$ is the right object for an inference task if and only if minimising this objective reflects the goal of that task (Knoblauch, Jewson \& Damoulas, 2022).
+ 
+\add{This is the conceptual pivot on which the remainder of the review depends. Once inference is an optimisation, the standard posterior is seen to fix three choices that need not be fixed --- a loss $\ell$, the divergence $\mathrm{KL}$ measuring departure from the prior, and the feasible set $\mathcal{P}(\Theta)$ optimised over. Knoblauch et al. free all three, defining the \emph{Rule of Three} (RoT) posterior
+$$
+\pi^{\star}_{(\ell,\, D,\, \Pi)} \;:=\; \arg\min_{q \in \Pi} \left\{ \mathbb{E}_{q}\Big[\sum_{i=1}^{n} \ell(\theta, x_i)\Big] + D(q \,\|\, \pi) \right\},
+$$
+specified by a loss $\ell$, a divergence $D$, and a feasible set $\Pi \subseteq \mathcal{P}(\Theta)$. Standard Bayes is the choice $\pi^{\star}_{(-\log p,\, \mathrm{KL},\, \mathcal{P}(\Theta))}$ and generalised Bayes is $\pi^{\star}_{(\ell,\, \mathrm{KL},\, \mathcal{P}(\Theta))}$; the same template also recovers tempered and PAC-Bayesian posteriors. The three arguments are not arbitrary: they answer the three assumptions that justify standard Bayes but routinely fail at scale --- a well-specified prior (P), a well-specified likelihood (L), and unlimited computation (C). The divergence $D$ controls how, and how strongly, the prior is enforced (P); the loss $\ell$ controls robustness to model misspecification (L); and the feasible set $\Pi$ controls tractability (C).}
+
+% [Claude] Notation: Knoblauch et al. write the RoT posterior as P(\ell, D, \Pi). I
+% renamed it \pi^\star_{(\ell,D,\Pi)} to avoid colliding with your model P_\theta --
+% pick whichever you prefer and use it consistently.
+ 
+\add{The third argument is where variational inference enters, and where our own work lives. Restricting $\Pi$ from all of $\mathcal{P}(\Theta)$ to a finite-dimensional family $\mathcal{Q} = \{q(\theta \mid \kappa) : \kappa \in K\}$ --- the object of standard variational inference, detailed next --- turns the infinite-dimensional problem into a finite-dimensional one. Crucially, standard VI is then not a separate approximation principle but the \emph{best $\mathcal{Q}$-constrained solution of the very same objective} (Knoblauch et al., 2022, Thm.~2): $\pi^{\star}_{\mathrm{VI}} = \pi^{\star}_{(\ell,\, \mathrm{KL},\, \mathcal{Q})}$. The tractable case in which $\Pi = \mathcal{Q}$ is a variational family and $D$ may differ from $\mathrm{KL}$ is what they call \emph{Generalised Variational Inference} (GVI). This shifts the role of $\mathcal{Q}$: rather than treating inference in $\mathcal{Q}$ as an approximation to $\pi_B$, we may take the objective itself as the design target and construct belief distributions in $\mathcal{Q}$ with the properties we want from the outset. \textbf{[forward link --- your contribution:} our MoE-PVI is naturally read in this frame as a choice of feasible set $\Pi$ (mixtures of experts) together with a [predictive / discrepancy-based] loss $\ell$ \dots\textbf{]}}
+% [Claude] One subtlety to address when you position your method: Knoblauch et al.
+% separate the RoT from "Discrepancy VI" (DVI), which minimises a discrepancy
+% D(q || pi_B) BETWEEN q and the Bayes posterior and does NOT fall inside the RoT.
+% If your MMD/particle objective targets a (predictive) objective directly, it is
+% RoT-like; if it projects onto pi_B under MMD, it is DVI. That choice changes how
+% you cite and frame the contribution.
+ 
+\subsection*{\add{Variational and stochastic variational inference}}
+\add{Whether standard or generalised, the posterior is typically intractable: the normalising constant $m(x_{1:n})$ is an integral that rarely admits a closed form. Variational inference (VI) sidesteps this by restricting attention to a tractable family $\mathcal{Q}$ and selecting the member closest to the posterior in KL,
+$$
+q^{*} = \arg\min_{q \in \mathcal{Q}} \mathrm{KL}\big(q(\theta) \,\|\, \pi_B(\theta \mid x_{1:n})\big).
+$$
+This KL cannot be evaluated directly, as it contains the intractable evidence, but minimising it is equivalent to maximising the evidence lower bound (ELBO),
+$$
+\mathrm{ELBO}(q) = \mathbb{E}_{q}\big[\log p(x_{1:n} \mid \theta)\big] - \mathrm{KL}\big(q(\theta) \,\|\, \pi(\theta)\big),
+$$
+since $\log p(x_{1:n}) = \mathrm{ELBO}(q) + \mathrm{KL}\big(q \,\|\, \pi_B(\cdot \mid x_{1:n})\big)$ and the evidence is constant in $q$; the ELBO thus lower-bounds the log evidence, with equality if and only if $q$ equals the posterior. Classical coordinate-ascent VI optimises the ELBO with a full sweep over the data each iteration, which does not scale. Stochastic variational inference (Hoffman et al., 2013) instead applies stochastic optimisation: it forms noisy, unbiased natural-gradient estimates of the ELBO from random data minibatches and updates under a Robbins--Monro step-size schedule ($\sum_t \rho_t = \infty$, $\sum_t \rho_t^2 < \infty$), giving VI that scales to very large datasets. For conditionally conjugate exponential-family models the natural gradient takes a simple form; black-box variants (Ranganath et al., 2014) remove the conjugacy requirement via score-function gradient estimators. The defining limitation for what follows is that VI and SVI fix a parametric family $\mathcal{Q}$ in advance --- the approximation can be no richer than that family allows --- which is precisely the restriction that the particle-based methods of Section 3 are designed to relax.}
+ 
+\subsection*{\add{Generalised variational inference: the Rule of Three}}
+\add{[Merged into ``The optimisation-centric view and the Rule of Three'' above, to avoid stating the RoT objective twice (the duplicate-equation issue). If you want a subsection here, give it a job the section above does not do --- e.g. a deeper look at one knob, such as how replacing $\mathrm{KL}$ with a heavier-tailed divergence $D$ changes the posterior marginals, which is the empirical headline of Knoblauch et al. on BNNs/DGPs --- rather than re-defining the framework.]}
+
+\pagebreak
+\noindent\rule{\textwidth}{1pt}
 \subsection*{\add{The pivot to an optimisation-centric view}}
 \add{The coherence result has an equivalent reading that drives the rest of this review: the Gibbs posterior is the solution of an optimisation problem,
     $$
@@ -157,7 +235,6 @@ A further motivation for the loss-based view is that researchers are often inter
               \item Prediction-Centric Uncertainty Quantification via MMD (Shen et al.)
               \item maybe: (Detecting model misspecification in Bayesian inverse problems via variational gradient descent)
           \end{itemize}
-
     \item \textbf{Variational Inference with Normalising Flows?? Adaptive Heterogeneous Mixtures of Normalising Flows for Robust Variational Inference?? And more MOE papers...}
 \end{enumerate}
 
