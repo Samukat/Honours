@@ -2,54 +2,88 @@
 % Packages
 % -------------------
 \documentclass[11pt,a4paper]{article}
-\usepackage[utf8x]{inputenc}
-\usepackage[T1]{fontenc}
-%\usepackage{gentium}
-\usepackage{mathptmx} % Use Times Font
-\usepackage[normalem]{ulem} % strikethrough via \sout (normalem keeps \emph italic)
 
-\usepackage[pdftex]{graphicx} % Required for including pictures
-% [Claude] removed [swedish]{babel}: swedish.ldf is missing here AND this thesis
-% is in English, so Swedish hyphenation was the wrong choice (template leftover).
-%\usepackage[swedish]{babel}
-\usepackage[pdftex,linkcolor=black,pdfborder={0 0 0}]{hyperref} % Format links for pdf
-\usepackage{calc} % To reset the counter in the document after title page
-\usepackage{enumitem} % Includes lists
-\usepackage{amsmath,amssymb,amsthm,mathtools}
+% --- Core Typography & Language ---
+\usepackage[T1]{fontenc}
+\usepackage{mathptmx}           % Use Times Font
+\usepackage[english]{babel}
+\frenchspacing                  % <--- Fixed here (removed \usepackage)
+\linespread{1.2}                % Set linespace
+
+% --- Math Support ---
+\usepackage{amsmath,amssymb,amsfonts,amsthm,mathtools,bbm,bm}
+
+% --- Graphics, Colours & Diagrams ---
+\usepackage{graphicx}
+\usepackage{xcolor}
 \usepackage{tikz}
 \usepackage{tcolorbox}
-\usepackage{xcolor}
-\usepackage{titlesec}
+% \usepackage{subcaption}
+\usepackage{subfig}
+
+% --- Tables & Lists ---
 \usepackage{booktabs}
-\usepackage{fancyhdr}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{enumitem}
+
+% --- Layout & Typography Tweaks ---
 \usepackage{parskip}
+\usepackage[all]{nowidow}       % Prevents widow/orphan lines
+\usepackage[normalem]{ulem}     % Strikethrough via \sout
+\usepackage{titlesec}
+\usepackage{comment}
 
+% --- Bibliography & Appendices ---
+\usepackage{natbib}
+\bibliographystyle{apalike}
+\usepackage[toc,page]{appendix}
+\usepackage[preprint]{neurips_2023}
 
+% --- Hyperlinks (Load Last) ---
+\usepackage{url}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    pdfborder={0 0 0}
+}
+\usepackage{bookmark}           % Improves hyperref bookmark handling
+
+% --- Custom Commands ---
 \newcommand{\add}[1]{{\color{red}#1}}
 \newcommand{\dele}[1]{{\color{gray}\sout{#1}}}
 
-\frenchspacing % No double spacing between sentences
-\linespread{1.2} % Set linespace
-\usepackage[a4paper, lmargin=0.1666\paperwidth, rmargin=0.1666\paperwidth, tmargin=0.1111\paperheight, bmargin=0.1111\paperheight]{geometry} %margins
-%\usepackage{parskip}
 
-\usepackage[all]{nowidow} % Tries to remove widows
-\usepackage[protrusion=true,expansion=true]{microtype} % Improves typography, load after fontpackage is selected
 
-%-----------------------
-% Set pdf information and add title, fill in the fields
-%-----------------------
-\hypersetup{
-pdfsubject = {},
-pdftitle = {},
-pdfauthor = {}
-}
 
-%-----------------------
-% Begin document
-%-----------------------
 \begin{document}
+\section{Lit review}
 
+\begin{enumerate}
+    \item \textbf{Foundations of Belief \dele{asd}\add{and} Updating \& Variational Inference}
+          \begin{itemize}
+              \item A general framework for updating belief distributions (Bissiri et al.)
+              \item Stochastic Variational Inference
+              \item An optimisation-centric view on Bayes' rule: Reviewing and generalising variational inference (Knoblauch et al.)
+          \end{itemize}
+
+    \item \textbf{The Shift to Predictively Oriented Posteriors}
+          \begin{itemize}
+              \item Predictive Variational Inference: Learning the predictively optimal posterior distribution
+              \item Predictive Variational Inference for flexible regression models
+              \item Predictively Oriented Posteriors (McLatchie et al.)
+          \end{itemize}
+
+    \item \textbf{Particle-Based Inference, MMD, and Misspecification}
+          \begin{itemize}
+              \item Stein Variational Gradient Descent (Liu \& Wang) (Very quick mention) and time complexity things
+              \item A Rigorous Link between Deep Ensembles and (Variational) Bayesian Methods
+              \item Prediction-Centric Uncertainty Quantification via MMD (Shen et al.), Wild et al. 2023
+              \item maybe: (Detecting model misspecification in Bayesian inverse problems via variational gradient descent)
+          \end{itemize}
+    \item \textbf{Variational Inference with Normalising Flows?? Adaptive Heterogeneous Mixtures of Normalising Flows for Robust Variational Inference?? And more MOE papers...}
+\end{enumerate}
 \section{1:}
 
 \dele{In this section we will begin by outlining some of the common notation with further notation introduced in the literature review.
@@ -60,7 +94,7 @@ At the core of statistical inference is the challenge of mathematically capturin
 Suppose that we have a statistical model $P_\theta \in \mathcal{P}$, where $\mathcal{P} = \{P_\theta : \theta \in \Theta\}$, with the parameters $\theta \in \Theta$ for the data points $x_{1:n} = \{x_1, x_2 \dots, x_n\}$ with a theoretical and often unknown data generating process (DGP) $D(x)$.
 The parameters $\theta$ index the candidate distributions \dele{used to describe the data}, with their specific values typically encoding information about the data itself.
 In frequentist statistics these parameters $\theta$ are treated as fixed but unknown constants, however, when dealing with the Bayesian approach, the parameters are treated as random variables / distributions. In the most standard Bayes we have the posterior density $$\pi_B(\theta \mid x_{1:n}) = \frac{\pi(\theta) L(x_{1:n}\mid\theta)}{m(x_{1:n})}\text{.}$$
-Where $\pi(\theta)$ is our prior knowledge of the parameters $\theta$, $L(x_{1:n} \mid \theta)$ is the likelihood function representing the probability of the observed data under those parameters, and $\pi_B(\theta \mid x_{1:n})$ is the pdf of the distribution $\theta \mid x_{1:n}$. The $B$ here indicating that this is the standard Bayesian posterior. Here $m(x_{1:n}) = \int_{\Theta} L(x_{1:n} \mid \theta)\, d\pi(\theta)$ is the marginal normalising constant of the distribution, whose computation often makes the distribution intractable.
+Where $\pi(\theta)$ is our prior knowledge of the parameters $\theta$, $L(x_{1:n} \mid \theta)$ is the likelihood function representing the probability of the observed data under those parameters, and $\pi_B(\theta \mid x_{1:n})$ is the pdf of the distribution $\theta \mid x_{1:n}$. The $B$ here indicating that this is the standard Bayesian posterior. Here $m(x_{1:n}) = \int_{\Theta} L(x_{1:n} \mid \theta) d\pi(\theta)$ is the marginal normalising constant of the distribution, whose computation often makes the distribution intractable.
 
 Bayesian inference is conceptually and practically appealing as, unlike frequentist statistical methods, we are able to allow our previous knowledge, specific domain expertise and experts in the subject matter to further inform our distribution. This injection of previous knowledge comes in the form of a carefully specified prior $\pi(\theta)$. Naturally, this comes with the potential risk of poor prior choice. $$\dots$$
 
@@ -70,25 +104,25 @@ Further, Bayesian posteriors produce belief distributions (as opposed to point e
 % the proper development below. This is the posterior-predictive / UQ content.
 This carries two related benefits. First, prediction propagates parameter uncertainty rather than conditioning on a single value of $\theta$; where the conventional Bayesian predictive density for an unobserved $x_{\text{new}}$ integrates the model over the posterior,
 \begin{equation}
-    p(x_{\text{new}} \mid x_{1:n}) = \int_{\Theta} p(x_{\text{new}} \mid \theta)\,\pi_B(\theta \mid x_{1:n})\,d\theta.\label{eq:prediction}
+    p(x_{\text{new}} \mid x_{1:n}) = \int_{\Theta} p(x_{\text{new}} \mid \theta)\pi_B(\theta \mid x_{1:n})d\theta.\label{eq:prediction}
 \end{equation}
-Second, any quantity of interest is recovered as a functional of the posterior, for instance the posterior mean $\hat{\theta}$ is recovered as $\int_{\Theta} \theta\,\pi_B(\theta \mid x_{1:n})\,d\theta$. Because inference averages over $\theta$ instead of fixing it at a single best\footnote{Here \emph{best} refers to the best available point estimate of $\theta$, e.g. the MLE or MAP.} value, the resulting predictions are less prone to the over-confidence of a plug-in point estimate.
+Second, any quantity of interest is recovered as a functional of the posterior, for instance the posterior mean $\hat{\theta}$ is recovered as $\int_{\Theta} \theta\pi_B(\theta \mid x_{1:n})d\theta$. Because inference averages over $\theta$ instead of fixing it at a single best\footnote{Here \emph{best} refers to the best available point estimate of $\theta$, e.g. the MLE or MAP.} value, the resulting predictions are less prone to the over-confidence of a plug-in point estimate.
 
 Moving to a more generalised Bayes, we can \dele{change this to}\add{recast inference as} an optimisation-centric approach. Generalised Bayes replaces the likelihood with a loss function raised in an exponential.
 
 \begin{align*}
-    \pi_{w}(\theta \mid x_{1:n}) & = \frac{\exp\big\{-w\sum_{i=1}^{n}\ell(\theta, x_i)\big\}\,\pi(\theta)}{\displaystyle\int_{\Theta}\exp\big\{-w\sum_{i=1}^{n}\ell(\theta, x_i)\big\}\,\pi(\theta)\,d\theta} \\
-                                 & \propto \exp\big\{-w\sum_{i=1}^{n}\ell(\theta, x_i)\big\}\,\pi(\theta)
+    \pi_{w}(\theta \mid x_{1:n}) & = \frac{\exp\big\{-w\sum_{i=1}^{n}\ell(\theta, x_i)\big\}\pi(\theta)}{\displaystyle\int_{\Theta}\exp\big\{-w\sum_{i=1}^{n}\ell(\theta, x_i)\big\}\pi(\theta)d\theta} \\
+                                 & \propto \exp\big\{-w\sum_{i=1}^{n}\ell(\theta, x_i)\big\}\pi(\theta)
 \end{align*}
 
 where \dele{once again there is a normaliser in the denominator that without we can find the distribution up to proportionality}\add{, as before, the denominator is the normalising constant; without it we characterise the distribution only up to proportionality}. There also exists a learning rate / loss scale $w \in {\color{red}\mathbb{R}_{>0}}$ \add{(strictly positive; $w$ rescales the total loss)}. This posterior is the Bissiri--Holmes--Walker (2016) Gibbs posterior.
 
 It is important to note here that from this posterior we can recover our previous standard Bayes posterior $\pi_{B}$ in the specific case with $\ell(\theta, x_i) = -\log p(x_i \mid \theta)$ and the learning rate $w = 1$. \add{The loss $-\log p(x_i\mid\theta)$ is the self-information (surprisal) of each observation, so this choice penalises the model exactly by how surprised it is by the data.} Following this we get
 \begin{align*}
-    \pi_w(\theta \mid x_{1:n}) & \propto \exp\!\Big\{-w\sum_{i=1}^{n}\ell(\theta, x_i)\Big\}\pi(\theta) \\
-                               & = \exp\!\Big\{\sum_{i=1}^{n}\log p(x_i \mid \theta)\Big\}\pi(\theta)   \\
-                               & = \Big(\prod_{i=1}^{n} p(x_i \mid \theta)\Big)\pi(\theta)              \\
-                               & = L(x_{1:n}\mid\theta)\,\pi(\theta)
+    \pi_w(\theta \mid x_{1:n}) & \propto \exp\Big\{-w\sum_{i=1}^{n}\ell(\theta, x_i)\Big\}\pi(\theta) \\
+                               & = \exp\Big\{\sum_{i=1}^{n}\log p(x_i \mid \theta)\Big\}\pi(\theta)   \\
+                               & = \Big(\prod_{i=1}^{n} p(x_i \mid \theta)\Big)\pi(\theta)            \\
+                               & = L(x_{1:n}\mid\theta)\pi(\theta)
 \end{align*}
 And further the normalising constant recovers the marginal likelihood in the same manner. Hence we recover $\pi_B(\theta \mid x_{1:n})$. \add{So standard Bayes is not a separate paradigm but a single specific instance of a more generalised approach where $\ell = \text{log loss},\ $ and $w = 1$}.
 
@@ -119,26 +153,26 @@ Some of the motivation for the loss-based view is that one may often only be int
 \subsection*{\add{The optimisation-centric view and the Rule of Three}}
 The generalised bayes posterior $\pi_w$ has an equivalent expression focusing more on the optimisation side. In Knoblauch, Jewson \& Damoulas (2022) it is shown that  \dele{and setting the multiplicative updating rule aside,} the exact posterior can equally be obtained as the solution of an infinite-dimensional optimisation problem over the space $\mathcal{P}(\Theta)$ of \emph{all} probability measures on $\Theta$. \dele{ refrences? maybe as called out :  representation they trace to Csisz\'ar (1975), Donsker \& Varadhan (1975) and Zellner (1988):}
 $$
-    \pi_B(\theta \mid x_{1:n}) = \arg\min_{q \in \mathcal{P}(\Theta)} \left\{ \mathbb{E}_{q}\Big[\sum_{i=1}^{n} \ell(\theta, x_i)\Big] + \mathrm{KL}(q \,\|\, \pi) \right\}, \qquad \ell(\theta, x_i) = -\log p(x_i \mid \theta).
+    \pi_B(\theta \mid x_{1:n}) = \arg\min_{q \in \mathcal{P}(\Theta)} \left\{ \mathbb{E}_{q}\Big[\sum_{i=1}^{n} \ell(\theta, x_i)\Big] + \mathrm{KL}(q \| \pi) \right\}, \qquad \ell(\theta, x_i) = -\log p(x_i \mid \theta).
 $$
-Replacing the log loss with a general $\ell$ (and absorbing the loss scale $w$ into $\ell$) returns exactly the generalised Gibbs posterior of the previous section; Bissiri et al. (2016) show the minimiser exists and coincides with $\pi_w$\footnote{Knoblauch et al.\ (2022) do not notationally distinguish the standard and generalised Bayesian posteriors, writing $q^\ast_B$ for both; here we keep them separate as $\pi_B$ and $\pi_w$.}whenever the normaliser $Z = \int_\Theta \exp\{-\sum_i \ell(\theta, x_i)\}\,\pi(\theta)\,d\theta$ is finite.
+Replacing the log loss with a general $\ell$ (and absorbing the loss scale $w$ into $\ell$) returns exactly the generalised Gibbs posterior of the previous section; Bissiri et al. (2016) show the minimiser exists and coincides with $\pi_w$\footnote{Knoblauch et al.\ (2022) do not notationally distinguish the standard and generalised Bayesian posteriors, writing $q^\ast_B$ for both; here we keep them separate as $\pi_B$ and $\pi_w$.}whenever the normaliser $Z = \int_\Theta \exp\{-\sum_i \ell(\theta, x_i)\}\pi(\theta)d\theta$ is finite.
 The objective can be interpreted as regularised empirical risk minimisation; it functions in two parts, minimising the expected loss over the data while the $\mathrm{KL}$ term pulls the solution toward the prior. These are both important points that will be further discussed later on.
 It should be noted that here it is the $\mathrm{KL}$ term which causes the optimisation problem to converge to a distribution, without it the problem collapses to a point mass $\delta_{\hat\theta}$ at the empirical risk minimiser $\hat\theta = \arg\min_\theta \sum_i \ell(\theta, x_i)$. This can be seen as we derive our previous bayes posteriors from this optimisation results.
 
 Letting $\ell_n(\theta) = \sum_{i=1}^{n}\ell(\theta,x_i)$ denote the cumulative loss, the normalising constant $Z$ and the normalised Gibbs posterior $\pi_w(\theta)$ are defined as
-$$Z = \int_{\Theta} \pi(\theta)\,e^{-\ell_n(\theta)}\,d\theta \quad \text{and} \quad \pi_w(\theta) = \frac{\pi(\theta)\,e^{-\ell_n(\theta)}}{Z}.$$
+$$Z = \int_{\Theta} \pi(\theta)e^{-\ell_n(\theta)}d\theta \quad \text{and} \quad \pi_w(\theta) = \frac{\pi(\theta)e^{-\ell_n(\theta)}}{Z}.$$
 The objective then collapses into a single Kullback-Leibler (KL) divergence,
 $$
     \begin{aligned}
-        \mathbb{E}_{q}\!\left[\sum_{i=1}^{n}\ell(\theta,x_i)\right] + \mathrm{KL}(q \,\|\, \pi)
-         & = \int_{\Theta} q(\theta)\,\ell_n(\theta)\,d\theta + \int_{\Theta} q(\theta)\log\frac{q(\theta)}{\pi(\theta)}\,d\theta \\
-         & = \int_{\Theta} q(\theta)\left[\log\frac{q(\theta)}{\pi(\theta)} + \ell_n(\theta)\right]d\theta                        \\
-         & = \int_{\Theta} q(\theta)\log\frac{q(\theta)}{\pi(\theta)\,e^{-\ell_n(\theta)}}\,d\theta                               \\ &= \int_{\Theta} q(\theta)\log\frac{q(\theta)}{Z\,\pi_w(\theta)}\,d\theta \\ &= \mathrm{KL}(q \,\|\, \pi_w) - \log Z.
+        \mathbb{E}_{q}\left[\sum_{i=1}^{n}\ell(\theta,x_i)\right] + \mathrm{KL}(q \| \pi)
+         & = \int_{\Theta} q(\theta)\ell_n(\theta)d\theta + \int_{\Theta} q(\theta)\log\frac{q(\theta)}{\pi(\theta)}d\theta \\
+         & = \int_{\Theta} q(\theta)\left[\log\frac{q(\theta)}{\pi(\theta)} + \ell_n(\theta)\right]d\theta                  \\
+         & = \int_{\Theta} q(\theta)\log\frac{q(\theta)}{\pi(\theta)e^{-\ell_n(\theta)}}d\theta                             \\ &= \int_{\Theta} q(\theta)\log\frac{q(\theta)}{Z\pi_w(\theta)}d\theta \\ &= \mathrm{KL}(q \| \pi_w) - \log Z.
     \end{aligned}
 $$
-Since $\log Z$ is independent of $q$ and $\mathrm{KL}(q \,\|\, \pi_w) \ge 0$ with equality if and only if $q = \pi_w$, the minimiser over $\mathcal{P}(\Theta)$ is exactly the Gibbs posterior,
-$$\arg\min_{q \in \mathcal{P}(\Theta)}\!\left\{\mathbb{E}_{q}\!\left[\sum_{i=1}^{n}\ell(\theta,x_i)\right] + \mathrm{KL}(q \,\|\, \pi)\right\} = \pi_w(\theta) = \frac{\pi(\theta)\exp\left\{-\sum_{i=1}^{n}\ell(\theta,x_i)\right\}}{Z}.$$
-Specialising to the log loss $\ell(\theta,x_i) = -\log p(x_i\mid\theta)$ yields $e^{-\ell_n(\theta)} = \prod_{i=1}^{n} p(x_i\mid\theta) = L(x_{1:n}\mid\theta)$ alongside the marginal likelihood $Z = \int_{\Theta}\pi(\theta)L(x_{1:n}\mid\theta)\,d\theta = m(x_{1:n})$. Substituting these components gives$$\pi_w(\theta) = \frac{\pi(\theta)\,L(x_{1:n}\mid\theta)}{m(x_{1:n})} = \pi_B(\theta \mid x_{1:n}),$$which recovers the standard Bayesian posterior. \add{A quick proof of dericlt mass for without $\mathrm{KL}$?}
+Since $\log Z$ is independent of $q$ and $\mathrm{KL}(q \| \pi_w) \ge 0$ with equality if and only if $q = \pi_w$, the minimiser over $\mathcal{P}(\Theta)$ is exactly the Gibbs posterior,
+$$\arg\min_{q \in \mathcal{P}(\Theta)}\left\{\mathbb{E}_{q}\left[\sum_{i=1}^{n}\ell(\theta,x_i)\right] + \mathrm{KL}(q \| \pi)\right\} = \pi_w(\theta) = \frac{\pi(\theta)\exp\left\{-\sum_{i=1}^{n}\ell(\theta,x_i)\right\}}{Z}.$$
+Specialising to the log loss $\ell(\theta,x_i) = -\log p(x_i\mid\theta)$ yields $e^{-\ell_n(\theta)} = \prod_{i=1}^{n} p(x_i\mid\theta) = L(x_{1:n}\mid\theta)$ alongside the marginal likelihood $Z = \int_{\Theta}\pi(\theta)L(x_{1:n}\mid\theta)d\theta = m(x_{1:n})$. Substituting these components gives$$\pi_w(\theta) = \frac{\pi(\theta)L(x_{1:n}\mid\theta)}{m(x_{1:n})} = \pi_B(\theta \mid x_{1:n}),$$which recovers the standard Bayesian posterior. \add{A quick proof of dericlt mass for without $\mathrm{KL}$?}
 
 Furthermore, we can see now that by using the Bayesian posterior, we are equivalently committing to this specific optimisation problem. As [paper ...] points out, similar to the generalised Bayes, using this standard posterior is only the right tool if minimising this objective actually reflects the overarching goal of the inference task. If the standard log loss does not align with those practical goals, this framework justifies replacing it with a custom loss function. (Knoblauch, Jewson \& Damoulas, 2022).
 
@@ -148,66 +182,38 @@ Furthermore, we can see now that by using the Bayesian posterior, we are equival
 
 Taking inference as an optimisation, the standard posterior is seen to fix three choices that need not be fixed. A loss $\ell$, the divergence $\mathrm{KL}$ measuring departure from the prior, and the feasible set $\mathcal{P}(\Theta)$ optimised over. Knoblauch et al. free all three, defining the \emph{Rule of Three} (RoT) posterior
 $$
-    \pi^{\star}_{(\ell,\, D,\, \Pi)} \;:=\; \arg\min_{q \in \Pi} \left\{ \mathbb{E}_{q}\Big[\sum_{i=1}^{n} \ell(\theta, x_i)\Big] + D(q \,\|\, \pi) \right\},
+    \pi^{\star}_{(\ell, D, \Pi)} \;:=\; \arg\min_{q \in \Pi} \left\{ \mathbb{E}_{q}\Big[\sum_{i=1}^{n} \ell(\theta, x_i)\Big] + D(q \| \pi) \right\},
 $$
-specified by a loss $\ell$, a divergence $D$, and a feasible set $\Pi \subseteq \mathcal{P}(\Theta)$\footnote{Notation: Knoblauch et al. write the RoT posterior as $P(\ell, D, \Pi)$. Here it is $\pi^\star_{(\ell,D,\Pi)}$ }. Standard Bayes is the choice $\pi^{\star}_{(-\log p,\, \mathrm{KL},\, \mathcal{P}(\Theta))}$ and generalised Bayes is $\pi^{\star}_{(\ell,\, \mathrm{KL},\, \mathcal{P}(\Theta))}$; the same template also recovers tempered and PAC-Bayesian posteriors.
+specified by a loss $\ell$, a divergence $D$, and a feasible set $\Pi \subseteq \mathcal{P}(\Theta)$\footnote{Notation: Knoblauch et al. write the RoT posterior as $P(\ell, D, \Pi)$. Here it is $\pi^\star_{(\ell,D,\Pi)}$ }. Standard Bayes is the choice $\pi^{\star}_{(-\log p, \mathrm{KL}, \mathcal{P}(\Theta))}$ and generalised Bayes is $\pi^{\star}_{(\ell, \mathrm{KL}, \mathcal{P}(\Theta))}$; the same template also recovers tempered and PAC-Bayesian posteriors.
 The three arguments \dele{are not arbitrary: they} answer three assumptions that justify standard Bayes, **but may have issues** $\overset{.|.}{\smile}$.
 A well-specified prior (P), a well-specified likelihood (L), and unlimited computation (C). The divergence $D$ controls how, and how strongly, the prior is enforced (P); the loss $\ell$ controls robustness to model misspecification (L); and the feasible set $\Pi$ controls tractability (C).
 
 An issue arieses in this setup where, computationally, this optimisation becomes quite intractable over an infinite dimensional space; the third argument in our objective $\Pi$ as he space of all possible probability measures $\mathcal{P}(\Theta)$, is infinite dimensional. Variational Inference helps this by restricting this third argument to a finite-dimensional family $\mathcal{Q} = \{q(\theta \mid \kappa) : \kappa \in K\}$, VI shrinks an impossible infinite-dimensional search down to a tractable finite one. Thus while VI is an approximation of the true posterior, it is still shown to be grounded by the same optimisation problem but constrained, yielding
-$$\pi^{\star}_{\mathrm{VI}} = \pi^{\star}_{(\ell,\, \mathrm{KL},\, \mathcal{Q})}.\footnote{Knoblauch et al., 2022, Thm.~2}$$
+$$\pi^{\star}_{\mathrm{VI}} = \pi^{\star}_{(\ell, \mathrm{KL}, \mathcal{Q})}.\footnote{Knoblauch et al., 2022, Thm.~2}$$
 
 Standard VI is then not a separate approximation principle but the \emph{best $\mathcal{Q}$-constrained solution of the very same objective} (Knoblauch et al., 2022, Thm.~2). The tractable case in which $\Pi = \mathcal{Q}$ is a variational family and $D$ may differ from $\mathrm{KL}$ is what they call \emph{Generalised Variational Inference} (GVI). This shifts the role of $\mathcal{Q}$; rather than treating inference in $\mathcal{Q}$ as an approximation to $\pi_B$, we may take the objective itself as the design target and construct belief distributions in $\mathcal{Q}$ with the properties we want from the outset. \add{MoE-PVI is in this frame as a choice of feasible set $\Pi$ (mixtures of experts) together with a [predictive / discrepancy-based] loss $\ell$ \dots}
 
 \subsection*{Variational and stochastic variational inference}
-\add{Whether working within a standard or generalised framework, the resulting posterior typically remains intractable due to the normalising constant $p(x_{1:n})$, often referred to as the marginal likelihood or model evidence. This evidence represents the total probability of observing the data marginalised over all possible parameter configurations, calculated as $p(x_{1:n}) = \int_{\Theta} p(x_{1:n} \mid \theta)\pi(\theta)\,d\theta$. Because this high-dimensional integral rarely admits a closed-form solution, directly computing the posterior is usually impossible. Variational inference attempts to sidestep this integration bottleneck by restricting the search to a tractable family of distributions $\mathcal{Q}$ and selecting the member that is closest to the true posterior in Kullback-Leibler divergence. The ideal variational distribution is therefore$$q^\star = \arg\min_{q \in \mathcal{Q}} \mathrm{KL}(q(\theta) \,\|\, \pi_B(\theta \mid x_{1:n})).$$However, this divergence cannot be minimised directly because its evaluation depends on the very intractable evidence we are trying to avoid. Expanding the definition of the KL divergence reveals this dependency explicitly, yielding$$\begin{aligned} \mathrm{KL}(q(\theta) \,\|\, \pi_B(\theta \mid x_{1:n})) &= \int_{\Theta} q(\theta) \log \frac{q(\theta)}{\pi_B(\theta \mid x_{1:n})} \,d\theta \\ &= \int_{\Theta} q(\theta) \log \frac{q(\theta) p(x_{1:n})}{p(x_{1:n} \mid \theta)\pi(\theta)} \,d\theta \\ &= \int_{\Theta} q(\theta) \left[ \log q(\theta) - \log \pi(\theta) - \log p(x_{1:n} \mid \theta) \right] d\theta + \log p(x_{1:n}) \\ &= \mathrm{KL}(q(\theta) \,\|\, \pi(\theta)) - \mathbb{E}_q[\log p(x_{1:n} \mid \theta)] + \log p(x_{1:n}). \end{aligned}$$By rearranging these terms, we can express the log evidence as the sum of two distinct components,$$\log p(x_{1:n}) = \left( \mathbb{E}_q[\log p(x_{1:n} \mid \theta)] - \mathrm{KL}(q(\theta) \,\|\, \pi(\theta)) \right) + \mathrm{KL}(q(\theta) \,\|\, \pi_B(\theta \mid x_{1:n})).$$The bracketed term is known as the Evidence Lower Bound (ELBO). Because the KL divergence is strictly non-negative, the ELBO strictly lower-bounds the true log evidence. Furthermore, since the log evidence $p(x_{1:n})$ is a constant with respect to the variational distribution $q$, minimising the KL divergence to the exact posterior is mathematically identical to maximising this lower bound, formally defined as$$\mathrm{ELBO}(q) = \mathbb{E}_q[\log p(x_{1:n} \mid \theta)] - \mathrm{KL}(q(\theta) \,\|\, \pi(\theta)).$$Classical coordinate-ascent variational inference optimises this ELBO with a full sweep over the dataset at each iteration, which quickly becomes computationally prohibitive for large datasets. To address this, Stochastic Variational Inference (Hoffman et al., 2013) applies stochastic optimisation by forming noisy, unbiased natural-gradient estimates of the ELBO from random data minibatches. By updating the parameters under a Robbins–Monro step-size schedule requiring $\sum_t \rho_t = \infty$ and $\sum_t \rho_t^2 < \infty$, the algorithm scales efficiently to massive datasets. While this natural gradient takes a remarkably simple form for conditionally conjugate exponential-family models, black-box variants (Ranganath et al., 2014) remove this conjugacy requirement entirely by relying on score-function gradient estimators. However, the defining limitation for all of these approaches is that they fix a parametric family $\mathcal{Q}$ in advance. The quality of the final approximation can never exceed the expressiveness of this chosen family, which is precisely the rigid restriction that the particle-based methods discussed in Section 3 are designed to relax.}
-
-% \subsection*{\add{Generalised variational inference: the Rule of Three}}
-% \add{[Merged into ``The optimisation-centric view and the Rule of Three'' above, to avoid stating the RoT objective twice (the duplicate-equation issue). If you want a subsection here, give it a job the section above does not do --- e.g. a deeper look at one knob, such as how replacing $\mathrm{KL}$ with a heavier-tailed divergence $D$ changes the posterior marginals, which is the empirical headline of Knoblauch et al. on BNNs/DGPs --- rather than re-defining the framework.]}
-
-% \pagebreak
-% \noindent\rule{\textwidth}{1pt}
-% \subsection*{\add{The pivot to an optimisation-centric view}}
-% \add{The coherence result has an equivalent reading that drives the rest of this review: the Gibbs posterior is the solution of an optimisation problem,
-%     $$
-%         \pi_w(\cdot \mid x_{1:n}) = \arg\min_{q \in \mathcal{P}(\Theta)} \left\{ w\sum_{i=1}^{n} \mathbb{E}_{q}\big[\ell(\theta, x_i)\big] + \mathrm{KL}(q \,\|\, \pi) \right\}.
-%     $$
-%     The minimiser trades fit to the data (expected loss) against fidelity to the prior (KL). This recasting --- traceable to Zellner (1988), who showed Bayes' rule itself solves such an information-processing problem --- turns ``being Bayesian'' from the mechanical application of a rule into the solution of a variational problem, and it is the foundation on which the remainder of this review builds.}
-
-% \subsection*{\add{Variational and stochastic variational inference}}
-% \add{Whether standard or generalised, the posterior is typically intractable: the normalising constant $m(x_{1:n})$ is an integral that rarely admits a closed form. Variational inference (VI) sidesteps this by restricting attention to a tractable family $\mathcal{Q}$ and selecting the member closest to the posterior in KL,
-%     $$
-%         q^{*} = \arg\min_{q \in \mathcal{Q}} \mathrm{KL}\big(q(\theta) \,\|\, \pi_B(\theta \mid x_{1:n})\big).
-%     $$
-%     This KL cannot be evaluated directly, as it contains the intractable evidence, but minimising it is equivalent to maximising the evidence lower bound (ELBO),
-%     $$
-%         \mathrm{ELBO}(q) = \mathbb{E}_{q}\big[\log p(x_{1:n} \mid \theta)\big] - \mathrm{KL}\big(q(\theta) \,\|\, \pi(\theta)\big),
-%     $$
-%     since $\log p(x_{1:n}) = \mathrm{ELBO}(q) + \mathrm{KL}\big(q \,\|\, \pi_B(\cdot \mid x_{1:n})\big)$ and the evidence is constant in $q$; the ELBO thus lower-bounds the log evidence, with equality if and only if $q$ equals the posterior. Classical coordinate-ascent VI optimises the ELBO with a full sweep over the data each iteration, which does not scale \add{More refrence and footnote}. Stochastic variational inference (Hoffman et al., 2013) instead applies stochastic optimisation: it forms noisy, unbiased natural-gradient estimates of the ELBO from random data minibatches and updates under a Robbins--Monro step-size schedule ($\sum_t \rho_t = \infty$, $\sum_t \rho_t^2 < \infty$), giving VI that scales to very large datasets. For conditionally conjugate exponential-family models the natural gradient takes a simple form; black-box variants (Ranganath et al., 2014) remove the conjugacy requirement via score-function gradient estimators. The defining limitation for what follows is that VI and SVI fix a parametric family $\mathcal{Q}$ in advance --- the approximation can be no richer than that family allows --- which is precisely the restriction that the particle-based methods of Section 3 are designed to relax.}
-
-% \subsection*{\add{Generalised variational inference: the Rule of Three}}
-% \add{Knoblauch, Jewson \& Damoulas (2022) unify these threads under an optimisation-centric view of inference. They observe that both the Bayesian update and variational inference are instances of one problem, specified by a triple --- a loss $\ell$, a divergence $D$, and a feasible set $\Pi$ of distributions to optimise over --- and define the generalised variational posterior
-%     $$
-%         q^{*} = \arg\min_{q \in \Pi} \left\{ \mathbb{E}_{q}\Big[\textstyle\sum_{i=1}^{n} \ell(\theta, x_i)\Big] + D(q \,\|\, \pi) \right\}.
-%     $$
-%     Standard VI is the choice (log loss, KL, a parametric family); the coherence / generalised-Bayes result above is the choice (general loss, KL, all of $\mathcal{P}(\Theta)$). Each component carries a distinct consequence --- the loss governs robustness, the divergence governs the marginal and tail behaviour of the approximation, and the feasible set governs tractability --- so generalisation proceeds by deliberately moving along one axis at a time. This is the frame within which the predictively-oriented posteriors of Section 2 (a choice of loss) and our own mixture-of-experts construction (a choice of feasible set $\Pi$) are best understood.}
+\add{Whether working within a standard or generalised framework, the resulting posterior typically remains intractable due to the normalising constant $p(x_{1:n})$, often referred to as the marginal likelihood or model evidence. This evidence represents the total probability of observing the data marginalised over all possible parameter configurations, calculated as $p(x_{1:n}) = \int_{\Theta} p(x_{1:n} \mid \theta)\pi(\theta)d\theta$. Because this high-dimensional integral rarely admits a closed-form solution, directly computing the posterior is usually impossible. Variational inference attempts to sidestep this integration bottleneck by restricting the search to a tractable family of distributions $\mathcal{Q}$ and selecting the member that is closest to the true posterior in Kullback-Leibler divergence. The ideal variational distribution is therefore$$q^\star = \arg\min_{q \in \mathcal{Q}} \mathrm{KL}(q(\theta) \| \pi_B(\theta \mid x_{1:n})).$$However, this divergence cannot be minimised directly because its evaluation depends on the very intractable evidence we are trying to avoid. Expanding the definition of the KL divergence reveals this dependency explicitly, yielding$$\begin{aligned} \mathrm{KL}(q(\theta) \| \pi_B(\theta \mid x_{1:n})) &= \int_{\Theta} q(\theta) \log \frac{q(\theta)}{\pi_B(\theta \mid x_{1:n})} d\theta \\ &= \int_{\Theta} q(\theta) \log \frac{q(\theta) p(x_{1:n})}{p(x_{1:n} \mid \theta)\pi(\theta)} d\theta \\ &= \int_{\Theta} q(\theta) \left[ \log q(\theta) - \log \pi(\theta) - \log p(x_{1:n} \mid \theta) \right] d\theta + \log p(x_{1:n}) \\ &= \mathrm{KL}(q(\theta) \| \pi(\theta)) - \mathbb{E}_q[\log p(x_{1:n} \mid \theta)] + \log p(x_{1:n}). \end{aligned}$$By rearranging these terms, we can express the log evidence as the sum of two distinct components,$$\log p(x_{1:n}) = \left( \mathbb{E}_q[\log p(x_{1:n} \mid \theta)] - \mathrm{KL}(q(\theta) \| \pi(\theta)) \right) + \mathrm{KL}(q(\theta) \| \pi_B(\theta \mid x_{1:n})).$$The bracketed term is known as the Evidence Lower Bound (ELBO). Because the KL divergence is strictly non-negative, the ELBO strictly lower-bounds the true log evidence. Furthermore, since the log evidence $p(x_{1:n})$ is a constant with respect to the variational distribution $q$, minimising the KL divergence to the exact posterior is mathematically identical to maximising this lower bound, formally defined as$$\mathrm{ELBO}(q) = \mathbb{E}_q[\log p(x_{1:n} \mid \theta)] - \mathrm{KL}(q(\theta) \| \pi(\theta)).$$Classical coordinate-ascent variational inference optimises this ELBO with a full sweep over the dataset at each iteration, which quickly becomes computationally prohibitive for large datasets. To address this, Stochastic Variational Inference (Hoffman et al., 2013) applies stochastic optimisation by forming noisy, unbiased natural-gradient estimates of the ELBO from random data minibatches. By updating the parameters under a Robbins–Monro step-size schedule requiring $\sum_t \rho_t = \infty$ and $\sum_t \rho_t^2 < \infty$, the algorithm scales efficiently to massive datasets. While this natural gradient takes a remarkably simple form for conditionally conjugate exponential-family models, black-box variants (Ranganath et al., 2014) remove this conjugacy requirement entirely by relying on score-function gradient estimators. However, the defining limitation for all of these approaches is that they fix a parametric family $\mathcal{Q}$ in advance. The quality of the final approximation can never exceed the expressiveness of this chosen family, which is precisely the rigid restriction that the particle-based methods discussed in Section 3 are designed to relax.}
 
 \section{2:}
+McLatchie et al. (2025) defining the predictively oriented (PrO)
+posterior as
 
 
-
+Rigorous Link between Deep Ensembles and (Variational) Bayesian Methods
 New statistical principle that combines desirable aspects of both parameter inference and density estimation. Uncertainty as a consequence of predictive ability. The discrepancy from \eqref{eq:prediction}.
 
 PrO posteriors converge at $n^{-\frac{1}{2}}$ while conventional only converge at this rate if the model can recover the true DGP.
 
 \begin{equation*}
-    \pi_{w} = \arg\min_{q\in\mathcal{P}(\Theta)}\left\{ \frac{\lambda_n}{n}\sum_{i=1}^{n} \int_\Theta S(P_\theta, x_i)\,dq(\theta) \;+\; \mathrm{KL}(q\,\|\,\pi) \right\}
+    \pi_{w} = \arg\min_{q\in\mathcal{P}(\Theta)}\left\{ \frac{\lambda_n}{n}\sum_{i=1}^{n} \int_\Theta S(P_\theta, x_i)dq(\theta) \;+\; \mathrm{KL}(q\|\pi) \right\}
 \end{equation*}
 \begin{equation}
-    \pi_{\mathrm{PrO}} = \arg\min_{q\in\mathcal{P}(\Theta)}\left\{ \frac{\lambda_n}{n}\sum_{i=1}^{n} S(P_q, x_i) \;+\; \mathrm{KL}(q\,\|\,\pi) \right\}, \qquad P_q := \int_\Theta P_\theta\,dq(\theta)
+    \pi_{\mathrm{PrO}} = \arg\min_{q\in\mathcal{P}(\Theta)}\left\{ \frac{\lambda_n}{n}\sum_{i=1}^{n} S(P_q, x_i) \;+\; \mathrm{KL}(q\|\pi) \right\}, \qquad P_q := \int_\Theta P_\theta dq(\theta)
 \end{equation}
 \begin{equation}
-    d\pi_{\mathrm{PrO}}(\theta) \;\propto\; \pi(\theta)\,\exp\!\left\{ -\frac{\lambda_n}{n}\sum_{i=1}^{n} \left.\frac{\delta\, S(P_q, x_i)}{\delta q}\right|_{q=\pi_{\mathrm{PrO}}}\!\!(\theta) \right\}
+    d\pi_{\mathrm{PrO}}(\theta) \;\propto\; \pi(\theta)\exp\left\{ -\frac{\lambda_n}{n}\sum_{i=1}^{n} \left.\frac{\delta S(P_q, x_i)}{\delta q}\right|_{q=\pi_{\mathrm{PrO}}}(\theta) \right\}
 \end{equation}
 
 Gibbs minimises the average of scores; PrO minimises the score of the average.
@@ -222,39 +228,183 @@ empirical measure $q \approx \tfrac{1}{M}\sum_{j} \delta_{\theta_j}$ and transpo
 directly. By transitioning to particle-based methods, we redefine the feasible set $\Pi$ within the Rule of Three framework, replacing the rigid parametric $\mathcal{Q}$ with the infinitely flexible space of empirical measures.
 
 \add{Two complementary lineages dominate the literature: the deterministic Stein flow of Liu and Wang
-(2016), and the Wasserstein-gradient-flow view of Wild et al.\ (2023), which unifies deep ensembles, Langevin dynamics and variational inference under a single functional. This section reviews both, and reconstructs the second on the toy problems of Wild et al.\ to expose the machinery our own method inherits.}
+    (2016), and the Wasserstein-gradient-flow view of Wild et al.\ (2023), which unifies deep ensembles, Langevin dynamics and variational inference under a single functional. This section reviews both, and reconstructs the second on the toy problems of Wild et al.\ to expose the machinery our own method inherits.}
 
-\subsection{Stein varational gradient descent (SVGD)}
+At the core of particle-based methods is an interacting physical system. To attempt to achieve the target, we apply forces that iteratively nudge our particles through the parameter space.
 
-
-\section{Lit review}
-
+We can conceptualise the movement and final distribution of these particles as being governed by three primary forces:
 \begin{enumerate}
-    \item \textbf{Foundations of Belief \dele{asd}\add{and} Updating \& Variational Inference}
-          \begin{itemize}
-              \item A general framework for updating belief distributions (Bissiri et al.)
-              \item Stochastic Variational Inference
-              \item An optimisation-centric view on Bayes' rule: Reviewing and generalising variational inference (Knoblauch et al.)
-          \end{itemize}
-
-    \item \textbf{The Shift to Predictively Oriented Posteriors}
-          \begin{itemize}
-              \item Predictive Variational Inference: Learning the predictively optimal posterior distribution
-              \item Predictive Variational Inference for flexible regression models
-              \item Predictively Oriented Posteriors (McLatchie et al.)
-          \end{itemize}
-
-    \item \textbf{Particle-Based Inference, MMD, and Misspecification}
-          \begin{itemize}
-              \item Stein Variational Gradient Descent (Liu \& Wang) (Very quick mention) and time complexity things
-              \item A Rigorous Link between Deep Ensembles and (Variational) Bayesian Methods
-              \item Prediction-Centric Uncertainty Quantification via MMD (Shen et al.), Wild et al. 2023
-              \item maybe: (Detecting model misspecification in Bayesian inverse problems via variational gradient descent)
-          \end{itemize}
-    \item \textbf{Variational Inference with Normalising Flows?? Adaptive Heterogeneous Mixtures of Normalising Flows for Robust Variational Inference?? And more MOE papers...}
+    \item The pull of the data (The Likelihood/Loss): A driving force that drags particles toward parameter values that minimise the empirical risk or self-information loss.
+    \item The anchor of the prior: A regularising force that pulls particles back toward our initial belief distribution $\pi(\theta)$, preventing overfitting.
+    \item The dispersion force (Repulsion/Noise): A mechanism that scatters the particles. This prevents the ensemble from collapsing into a single point estimate (MAP) and ensures the particles spread out to accurately map the uncertainty and variance of the target distribution. \footnote{Forces 2 and 3 are not completely independent as we will see in Deep Ensembles}
 \end{enumerate}
 
-% [Claude] \ref{sec:pvi} above points here -- give your PVI section this label when you write it:
-% \section{...}\label{sec:pvi}
+The diverse landscape of particle-based inference methods can be elegantly understood simply by examining how they implement, alter, or completely omit these three specific forces.
+
+\subsection{Stein varational gradient descent (SVGD)}
+Stein variational gradient descent (Liu and Wang, 2016) approximates a target $p(\theta)$ by deterministically transporting particles along the steepest descent of $\mathrm{KL}(q||p)$ within the unit ball of a Reproducing-kernel hilbert space. \add{Explain the difference between L2 and RKHS and the norm perhaps}
+
+\begin{figure}[htbp]
+    \centering % Centers the image horizontally
+    % 3. Insert the image and set the width
+    \includegraphics[width=0.7\textwidth]{images/rkhspng.png}
+    \caption{An Empirical Kernel Mean Embedding mapping discrete particles into a Reproducing Kernel Hilbert Space (RKHS). The bandwidth ($\sigma$) visually dictates the strictness of the RKHS smoothness penalty, illustrating how isolated data points are mathematically transformed into the continuous, interacting field that drives SVGD's repulsive force.} % Adds a description below the image
+    \label{fig:mean_kernel_embedding} % Used to cross-reference this image in text
+\end{figure}
+
+The three conceptual forces are directly seen in the SVGD update equation. Let our ensemble of $M$ particles at iteration $t$ be $\{\theta_j^{(t)}\}_{j=1}^M$. The particles are updated deterministically via a step size $\epsilon$ giving an update step
+\begin{equation}
+    \theta_j^{(t+1)} \leftarrow \theta_j^{(t)} + \epsilon  \phi^\star(\theta_j^{(t)}).
+\end{equation}
+The optimal perturbation direction $\phi^\star(\theta_j)$ is restricted to a Reproducing Kernel Hilbert Space (RKHS) governed by a positive-definite kernel $\kappa(\cdot, \cdot)$. It is computed as the empirical average over the entire particle ensemble:
+\begin{equation}
+    \phi^\star(\theta_j) = \frac{1}{M} \sum_{k=1}^M \Bigg[ \underbrace{- w \sum_{i=1}^n \nabla_{\theta_k} \ell(\theta_k, x_i)  \kappa(\theta_k, \theta_j)}_{\text{1. The Pull of the Data}} + \underbrace{\nabla_{\theta_k} \log \pi(\theta_k)  \kappa(\theta_k, \theta_j)}_{\text{2. The Anchor of the Prior}} + \underbrace{\vphantom{\sum_{i=1}^n} \nabla_{\theta_k} \kappa(\theta_k, \theta_j)}_{\text{3. Kernel Repulsion}} \Bigg].
+\end{equation}
+
+The first two terms represent the smoothed gradient (the score) of the generalised posterior $\nabla \log \pi_w$, acting as the driving force that drags particles towards high-density regions. In total, counting $\kappa(\theta_l, \theta)$ as the kernel-weightd average of the score (Also shown in Figure \ref{fig:mean_kernel_embedding}), this total attraction can be seen in one term $\kappa(\theta_l,\theta)\nabla_{\theta_l}\log p(\theta_l)$. The third term is the gradient of the kernel itself; which pushes neighboring particles apart and prevents mode collapse that ordinary gradient descent/assent would produce. \add{The explicit deterministic repulsion is the defining mechanism of SVGD, contrasting it with other particle methods that rely on stochastic noise for dispersion.}
+
+The cost of SVGD is the pairwise kernel evaluation, $O(M^2)$ per iteration, and, \add{in common with kernel methods generally performance degrades in higher dimensions as the kernel's ability to discriminate between particles weakens - Understanding the Variance Collapse of SVGD in High Dimensions - 'the kernel matrix essentially becomes uniform'}
+
+
+\textbf{\add{'In this work we attempt to explain the variance collapse in SVGD. On the qualitative side, we compare the SVGD update with gradient descent on the maximum mean discrepancy (MMD) objective;' - very important for my work. From  Understanding the Variance Collapse of SVGD in High Dimensions }}
+
+\subsection{Deep Ensembles: Omitting the Dispersion Force}
+
+Wild et al.~(2023) \add{(and Lakshminarayanan et al., 2017??? for specifically deep ensembles not as a bayesian thing)} establish a rigorous link between Bayesian inference, variational methods, and deep ensembles. They achieve this by recasting the non-convex training objective of deep learning as a convex optimisation problem over the space of probability measures $\mathcal{P}(\Theta)$. This aligns perfectly with the optimisation-centric perspective introduced in Section~1, and they analyse this space using Wasserstein gradient flows. Concretely, they minimise the free energy:
+\begin{equation}
+    \begin{split}
+        L(q) = \int_\Theta V(\theta)dq(\theta)
+        + \frac{\lambda_1}{2}\iint_{\Theta^2} \kappa(\theta,\theta')dq(\theta)dq(\theta')
+         & + \lambda_2\int_\Theta q(\theta)\log q(\theta)d\theta,               \\
+         & \text{where } V(\theta) = \ell_n(\theta) - \lambda_2\log\pi(\theta),
+    \end{split}
+    \label{eq:freeenergy}
+\end{equation}
+
+This objective can be broken down into three separate key ideas in a thermodynamic sum, similar to before. The first term is the external potential energy averaged over the particles where $V$ is the potential. The potential energy $V = \ell_n - \lambda_2\log\pi$ pulls the particles towards the data given by the loss function $\ell$ as well as the prior form $\lambda_2\log\pi$. The second term, kernel interaction weighted by $\lambda_1$, is similar to the SVGD interaction term. Finally, the third term is a negative-entropy term weighted by $\lambda_2$.
+
+Taking just the potential energy term and third term representing entropy, equivalent to setting $\lambda_1$ to 0, recoveres our $\pi_w$ from before. Starting with our total free energy equation,
+\begin{align*}
+    L(q)\big|_{\lambda_1=0} & = \int_\Theta V(\theta)q(\theta)d\theta + \lambda_2\int_\Theta q(\theta)\log q(\theta)d\theta                                              \\
+                            & = \int_\Theta \big( \ell_n(\theta) - \lambda_2\log\pi(\theta) \big) q(\theta)d\theta + \lambda_2\int_\Theta q(\theta)\log q(\theta)d\theta \\
+                            & = \int_\Theta \ell_n(\theta)q(\theta)d\theta + \lambda_2\int_\Theta q(\theta) \big( \log q(\theta) - \log\pi(\theta) \big)d\theta          \\
+                            & = \mathbb{E}_q[\ell_n(\theta)] + \lambda_2\mathrm{KL}(q\|\pi).
+\end{align*}
+
+Dividing this objective by $\lambda_2$ exactly recovers the Rule of Three objective from Section~1, where the generalisation learning rate is $w = 1/\lambda_2$. Consequently, the minimiser of this free energy is the Gibbs posterior $q^{*} = \pi_w \propto \pi(\theta)\exp\{-\ell_n(\theta)/\lambda_2\}$. As established previously, in the specific case where $\lambda_2=1$ ($w=1$) and the loss is the self-information $-\log p(x_i \mid \theta)$, this objective recovers the standard Bayesian posterior $\pi_B$.
+
+Furthermore, we can that when we set $\lambda_1 = \lambda_2 = 0$ we are left with only the $V(\theta)$ giving standard gradient decent and no dispersion of particles; the particles collapse onto the global minimiser of the loss. \add{this is a deep ensemble.}
+
+
+
+\subsubsection*{Discretisation and Update Rule}
+
+As SVGD did and inline with particle approximations, to implement this infinite-dimensional gradient descent in practice, Wild et al.~(2023) approximate the continuous-time Wasserstein gradient flow (\add{Show optimal trasnport and what the wasserstein gradient flow is})using an ensemble of $N_E$ interacting particles. The evolution of these particles in continuous time is governed by a stochastic differential equation (SDE) (\add{of McKean-Vlasov type}):
+\begin{equation}
+    d\theta_n(t) = -\left( \nabla V(\theta_n(t)) + \frac{\lambda_1}{N_E} \sum_{j=1}^{N_E} \nabla_1 \kappa(\theta_n(t), \theta_j(t)) \right) dt + \sqrt{2\lambda_2} \, dB_n(t),
+\end{equation}
+for $n = 1, \dots, N_E$, where $\{B_n(t)\}_{t>0}$ are independent standard Brownian motions, and $\nabla_1 \kappa$ denotes the gradient of the interaction kernel with respect to its first argument.
+
+To simulate these trajectories computationally over a finite time horizon, the Euler-Maruyama discretisation (Appendix B in wild et al) method is applied. Given a discrete step size (or learning rate) $\eta > 0$, the update rule for the $n$-th particle at iteration $t$ becomes
+\begin{equation}
+    \theta_{n, t+1} = \theta_{n, t} - \eta \left( \nabla V(\theta_{n, t}) + \frac{\lambda_1}{N_E} \sum_{j=1}^{N_E} \nabla_1 \kappa(\theta_{n, t}, \theta_{j, t}) \right) + \sqrt{2\eta\lambda_2} \, Z_{n, t}.
+    \label{eq:updaterule}
+\end{equation}
+where $Z_{n, t} \sim \mathcal{N}(0, I)$\footnote{The presence of $\eta$ under the square root arises directly from the scaling properties of Brownian motion. When discretising the SDE, the infinitesimal increment $dB_n(t)$ is replaced by a finite time increment $\Delta B_n = B_n(t+\eta) - B_n(t)$. By definition, the increments of standard Brownian motion over a time step $\eta$ are normally distributed with variance $\eta$, such that $\Delta B_n \sim \mathcal{N}(0, \eta I)$. To simulate this computationally using standard Gaussian noise $Z_{n,t} \sim \mathcal{N}(0, I)$, we must scale $Z_{n,t}$ by the standard deviation $\sqrt{\eta}$, yielding $\Delta B_n = \sqrt{\eta}Z_{n,t}$. Substituting this into the noise term of the SDE yields $\sqrt{2\lambda_2}(\sqrt{\eta}Z_{n,t}) = \sqrt{2\eta\lambda_2}Z_{n,t}$.} is standard Gaussian noise injected at each update step. Apparently. ( still don't fully get this )
+
+This update rule translates the thermodynamic properties of the free energy objective directly into algorithmic operations, recovering three distinct ensemble methodologies depending on the regularisation parameters:
+\begin{itemize}
+    \item \textbf{Deep Ensembles (DE):} As established above, setting $\lambda_1 = \lambda_2 = 0$ removes both the repulsive interactions and the injected noise. The particles evolve independently via standard gradient descent from their random initialisations, gravitating towards the local minima of the loss landscape.
+    \item \textbf{Deep Langevin Ensembles (DLE):} Setting $\lambda_1 = 0$ and $\lambda_2 > 0$ yields independent Langevin diffusions. The particles do not interact, but the injected noise ensures they sample from the target Gibbs posterior rather than simply collapsing onto a mode.
+    \item \textbf{Deep Repulsive Langevin Ensembles (DRLE):} When both regularisation parameters are strictly positive ($\lambda_1 > 0, \lambda_2 > 0$), the full update rule is engaged. Particles actively repel each other via the kernel $\kappa$ while exploring the landscape with injected noise, guaranteeing convergence to the global minimiser of the free energy over the space of probability measures.
+\end{itemize}
+
+\subsubsection*{Toy Example: The Global Minimiser}
+
+To explicitly demonstrate the theoretical convergence guarantees of these interacting particle systems, Wild et al.~(2023) construct a one-dimensional loss landscape featuring a deep global minimum alongside a shallower local minimum. By initialising particles from a standard Gaussian prior, they show that unregularised Deep Ensembles merely partition particles into these distinct modes based on their initial regions of attraction. In contrast, the noise and repulsive forces in fully regularised methods allow the ensemble to escape local traps and successfully represent the true global minimiser. The underlying non-convex loss function driving this behaviour is defined as an asymmetric polynomial:
+$$ \ell(\theta) = \frac{3}{2}\left(\frac{1}{4}\theta^4 + \frac{1}{3}\theta^3 - \theta^2\right) - \frac{3}{8}, \qquad \text{with prior } \pi(\theta) = \mathcal{N}(0, 1). $$
+
+To visualise the distinct behaviour of each ensemble method within this asymmetric polynomial landscape, we simulate the particle trajectories over 100,000 steps. Figure~\ref{fig:ensemble_progression} illustrates the progression from deterministic collapse to fully regularised exploration. 
+
+\begin{figure}[htbp]
+    \centering
+    % First Subfigure: Deep Ensembles
+    \subfloat[DE ($\lambda_1 = 0, \lambda_2 = 0$)\label{fig:sub_de}]{%
+        \includegraphics[width=0.32\textwidth]{images/V.png}%
+    }\hfill
+    % Second Subfigure: Deep Langevin Ensembles
+    \subfloat[DLE ($\lambda_1 = 0, \lambda_2 = 1$)\label{fig:sub_dle}]{%
+        \includegraphics[width=0.32\textwidth]{images/DLE.png}%
+    }\hfill
+    % Third Subfigure: Deep Repulsive Langevin Ensembles
+    \subfloat[DRLE ($\lambda_1 = 1.0, \lambda_2 = 1$)\label{fig:sub_drle}]{%
+        \includegraphics[width=0.32\textwidth]{images/DRLE.png}%
+    }
+    \caption{Particle distributions after 100,000 steps across three regularisation regimes. \textbf{(a)} Driven solely by gradient descent, unregularised particles collapse entirely into point masses at the local and global minima. \textbf{(b)} The injection of noise allows particles to escape strict collapse and sample from the optimal Gibbs posterior. \textbf{(c)} Adding a repulsive kernel forces particles away from one another, resulting in a broader, flatter distribution that ensures more diverse coverage of the parameter space.}
+    \label{fig:ensemble_progression}
+\end{figure}
+
+While the Deep Repulsive Langevin Ensembles capture a much broader representation of the space, it is crucial to understand that increasing this repulsive force introduces a fundamental trade-off. Figure~\ref{fig:comparison} provides a comprehensive analysis of how scaling $\lambda_1$ shifts the algorithmic behaviour away from the true, unregularised posterior. 
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{images/DLEvsDLRE.png}
+    \caption{Quantitative impact of the repulsive regularisation parameter $\lambda_1$. As the repulsive force increases, probability mass systematically redistributes between basins, peak heights decrease, and the overall standard deviation widens. This increased particle diversity comes at the explicit cost of an expanding Kullback-Leibler (KL) divergence from the standard Deep Langevin Ensemble target.}
+    \label{fig:comparison}
+\end{figure}
+
+
+
+
+
+
+% Through the lens of our three-force framework, a deep ensemble perfectly implements the pull of the data and the anchor of the prior (typically applied via $L_2$ weight decay), but entirely omits an active dispersion force. Instead of forcing particles to mathematically interact or repel each other during optimisation, variance is achieved passively through random initialisation and the stochasticity of mini-batch training. While lacking a formal mechanism to guarantee complete coverage of the posterior, their empirical predictive performance is highly robust and frequently rivals or exceeds more complex, explicitly Bayesian methods.
+
+% \label{sec:wild}
+% Wild et al.\ (2023) establish the first rigorous link between Bayesian, variational Bayesian and
+% ensemble methods by recasting the non-convex training objective of deep learning as a \emph{convex}
+% optimisation over the space $\mathcal{P}(\Theta)$ of probability measures --- the same
+% optimisation-centric object introduced in Section~1 --- and analysing it through Wasserstein
+% gradient flows. Concretely, they minimise the free energy
+% \begin{equation}
+%     L(q) = \int_\Theta V(\theta)dq(\theta)
+%     + \frac{\lambda_1}{2}\iint_{\Theta^2} \kappa(\theta,\theta')dq(\theta)dq(\theta')
+%     + \lambda_2\mathrm{KL}(q\|\pi),
+%     \qquad V(\theta)\equiv\ell_n(\theta),
+%     \label{eq:freeenergy}
+% \end{equation}
+% a data-fit potential $V$ equal to the cumulative loss of Section~1, a kernel interaction weighted by
+% $\lambda_1$, and a prior-regularising $\mathrm{KL}$ weighted by $\lambda_2$.\footnote{Wild et al.\
+%     write the last term as a negative entropy $\lambda_2\int q\log q$ with the prior absorbed into $V$;
+%     \eqref{eq:freeenergy} is the equivalent $\mathrm{KL}$ form, kept here to match Section~1.} The
+% Wasserstein gradient of \eqref{eq:freeenergy} drives an interacting particle system whose
+% Euler--Maruyama discretisation is
+% \begin{equation}
+%     \theta_j^{(t+1)} = \theta_j^{(t)} - \eta\Big[
+%         \nabla\ell_n(\theta_j^{(t)}) - \lambda_2\nabla\log\pi(\theta_j^{(t)})
+%         + \tfrac{\lambda_1}{M}\textstyle\sum_{m=1}^{M}\nabla_1 \kappa(\theta_j^{(t)},\theta_m^{(t)})\Big]
+%     + \sqrt{2\lambda_2\eta}\xi_j^{(t)},
+%     \qquad \xi_j^{(t)}\sim N(0,1).
+%     \label{eq:wildupdate}
+% \end{equation}
+% The two scalars $(\lambda_1,\lambda_2)$ index a family of methods that the literature had treated as
+% separate. With $\lambda_1=\lambda_2=0$, \eqref{eq:wildupdate} is ordinary gradient descent and the
+% particles collapse onto the global minimiser of the loss: this is a deep ensemble. Switching on
+% $\lambda_2$ adds the diffusion term and recovers a deep Langevin ensemble whose stationary law is
+% $q^{*}(\theta)\propto\exp(-\ell_n(\theta)/\lambda_2)\pi(\theta)$ --- exactly the Gibbs posterior
+% $\pi_w$ of Section~1 with $w=1/\lambda_2$, so that the temperature of the ensemble and the learning
+% rate of the generalised posterior are the same dial. Switching on $\lambda_1$ adds the kernel
+% repulsion and yields a deep repulsive Langevin ensemble, which maintains multiple modes without
+% relying on noise alone. The crucial structural observation is that the methods differ only in which
+% regularisers are active and in whether the gradient descent is finite-dimensional --- parameterised
+% variational inference, optimising over a fixed $\mathcal{Q}$ --- or infinite-dimensional, optimising
+% over all of $\mathcal{P}(\Theta)$ as a particle flow. Wild et al.\ use this to explain the empirical
+% superiority of deep ensembles over parameterised variational inference, and prove convergence of
+% their interacting ensembles to a well-defined global minimiser on $\mathcal{P}(\Theta)$ --- a
+% guarantee that parameterised schemes, constrained to a possibly inexpressive $\mathcal{Q}$, cannot
+% match.
+
+
+
 
 \end{document}
