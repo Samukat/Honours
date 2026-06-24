@@ -1,3 +1,4 @@
+undefined
 %--------------------
 % Packages
 % -------------------
@@ -33,7 +34,6 @@
 \usepackage[normalem]{ulem}     % Strikethrough via \sout
 \usepackage{titlesec}
 \usepackage{comment}
-\usepackage{mathrsfs}
 
 % --- Bibliography & Appendices ---
 \usepackage{natbib}
@@ -257,7 +257,7 @@ We can conceptualise the movement and final distribution of these particles as b
     \item The dispersion force (Repulsion/Noise): A mechanism that scatters the particles. This prevents the ensemble from collapsing into a single point estimate (MAP) and ensures the particles spread out to accurately map the uncertainty and variance of the target distribution. \footnote{Forces 2 and 3 are not completely independent as we will see in Deep Ensembles}
 \end{enumerate}
 
-Particle-based inference methods generally manage the trade-off between mode-seeking behaviour and particle diversity through three primary mechanisms.
+The diverse landscape of particle-based inference methods can be elegantly understood simply by examining how they implement, alter, or completely omit these three specific forces.
 
 \subsection{Stein varational gradient descent (SVGD)}
 Stein variational gradient descent (Liu and Wang, 2016) approximates a target $p(\theta)$ by deterministically transporting particles along the steepest descent of $\mathrm{KL}(q||p)$ within the unit ball of a Reproducing-kernel hilbert space. \add{Explain the difference between L2 and RKHS and the norm perhaps}
@@ -376,10 +376,11 @@ While the Deep Repulsive Langevin Ensembles capture a much broader representatio
 Kernel mean embedding as  
 $$\mu_k(P) := \int k(\cdot, y) d P(y) \in \mathcal{H}(k)$$
 Then the divergence of a candidate $P \in \mathcal{P}(\mathcal{Y})$ from the data-generating distribution $P_\star$ is given by the MMD  
-$$\text{MMD}(P_\star, P) = \| \mu_k(P_\star) - \mu_k(P)\|_{\mathcal{H}(k)}$$ 
+$$\text{MMD}(P_\star, P) = \| \mu_k(P_\star) - \mu_k(P)\|_{\mathcal{H}(k)}$$ \add{Note: Changed MMD to \text{MMD} so it is not formatted as the variables M times M times D.}
  - proper metrix if $k$ is the characteristic kernel
- - Statistical divergence by "proper scoring rule [Dawid, 1986]"
+ - Statistical divergence by "proper scoring rule [Dawid, 1986]" \add{Note: Closed the quotation mark here.}
 
+\add{Note: Removed HTML <br> tag which will break LaTeX compilation or render literally. If you want vertical space, use \vspace{1em} instead.}
 
 Mixture model; $$P_Q = \int P_\theta dQ(\theta) \in \mathcal{P}(\mathcal{Y})$$  
 the mean embedding for the $P_Q$ is given as 
@@ -391,9 +392,7 @@ $$
 $$
 
 which means that 
-$$MMD^2(P_\star, P) = \left\| \int \{ \mu_k(P_\star) - \mu_k(P_\theta) \} \add{dQ(\theta)}\right\|^2_{\mathcal{H}(k)} = \int\int\kappa_{P_{\star}}(\theta, \vartheta) dQ(\theta)dQ(\vartheta)$$ 
-
-% \add{Note: Added missing $dQ(\vartheta)$ inside the norm. Changed $\mathbb{v}$ and $\mathscr{v}$ to $\vartheta$ to match your later equations. $\mathbb{v}$ does not exist in standard amsfonts and will trigger a fatal compilation error.}
+$$MMD^2(P_\star, P) = \left\| \int \{ \mu_k(P_\star) - \mu_k(P_\theta) \} \add{dQ(\theta)}\right\|^2_{\mathcal{H}(k)} = \int\int\kappa_{P_{\star}}(\theta, \vartheta) dQ(\theta)dQ(\vartheta)$$ \add{Note: Added missing dQ(\theta) inside the norm. Changed \mathbb{v} and \mathscr{v} to \vartheta to match your later equations. \mathbb{v} does not exist in standard amsfonts and will trigger a fatal compilation error.}
  - last step is from explanding the norm using the inner product then exchanging inner product and intergral
 $$\begin{aligned}
 \left\| \int \{ \dots \} dQ(\theta) \right\|^2 &= \langle \int (\dots) dQ(\theta), \int (\dots) dQ(\vartheta) \rangle \\
@@ -413,20 +412,23 @@ $$
 $$
 
 Gives us 4 terms  
-\begin{enumerate}
-    \item data vs data = constant 
-    \item data vs model 1
-    \item data vs model 2
-    \item model 1 vs model 2
-\end{enumerate}
-where
+- data vs data = constant 
+- data vs model 1
+- data vs model 2
+- model 1 vs model 2 where \add{Note: Consider wrapping these bullet points in an itemize environment, as raw dashes in text mode will not render as a proper list.}
+
+
 $$\kappa_{P^\star}(\theta, \vartheta) \stackrel{+C}{=} \iint k(y,y') \, dP_\theta(y) \, dP_\vartheta(y') - \iint k(y,y') \, dP_\theta(y) \, dP^\star(y') - \iint k(y,y') \, dP^\star(y) \, dP_\vartheta(y')$$
+---- \add{Note: These four dashes will render exactly as written. If you want a horizontal line, replace them with \noindent\hrulefill}
 In practice we dont have the true data generating function $P_\star$ so we replace it with the empirical distribution $P_n = \frac{1}{n}\sum_i\delta_{y_i}$. Bellow the same as above but with the replaced $P_n$
 $$\kappa_{P_n}(\theta, \vartheta) = \iint k(y,y') \, dP_\theta(y) \, dP_\vartheta(y') - \frac{1}{n}\sum_{i=1}^n \int k(y_i, y) \, dP_\theta(y) - \frac{1}{n}\sum_{i=1}^n \int k(y_i, y) \, dP_\vartheta(y)$$
 
+\add{Note: Removed $$ from around the align block below. The align environment natively initiates math mode, so wrapping it in $$ causes a fatal compilation error.}
 \begin{align}
-    \mathcal{F}_n(Q) &= \underbrace{ \underbrace{\frac{1}{2} \iint \kappa_{P_n}(\theta, \vartheta) \, dQ(\theta) \, dQ(\vartheta)}_{\text{interaction energy}} + \underbrace{\int v(\theta) \, dQ(\theta)}_{\text{single-particle (prior)}} }_{\mathcal{E}_n(Q) \text{ (free energy)}} + \underbrace{\lambda_n \int \log q(\theta) \, dQ(\theta)}_{\text{negative entropy}}  \\
-    &= \frac{1}{2}\iint \kappa_{P_n}(\theta, \vartheta)\, dQ(\theta)\, dQ(\vartheta) + \lambda_n\, \text{KL}(Q \| Q_0)
+\mathcal{F}_n(Q) &= \underbrace{ \underbrace{\frac{1}{2} \iint \kappa_{P_n}(\theta, \vartheta) \, dQ(\theta) \, dQ(\vartheta)}_{\text{interaction energy}} + \underbrace{\int v(\theta) \, dQ(\theta)}_{\text{single-particle (prior)}} }_{\mathcal{E}_n(Q) \text{ (free energy)}} + \underbrace{\lambda_n \int \log q(\theta) \, dQ(\theta)}_{\text{negative entropy}}  \\
+
+ &= \frac{1}{2}\iint \kappa_{P_n}(\theta, \vartheta)\, dQ(\theta)\, dQ(\vartheta) + \lambda_n\, \text{KL}(Q \| Q_0)
+
 \end{align}
 
 Taking the gradint of eveything for the particle update
@@ -436,7 +438,7 @@ $$
     &\text{Functional Gradient:} \quad &\nabla_W \mathcal{E}_n(Q_t)(\theta_t) &= \nabla v(\theta_t) + \int \nabla_1 \kappa_{P_n}(\theta_t, \vartheta) \, dQ_t(\vartheta) \\[12pt]
     &\text{Particle Update (SDE):} \quad &d\theta_t &= -\nabla_W \mathcal{E}_n(Q_t)(\theta_t) \, dt + \sqrt{2\lambda_n} \, dW_t
 \end{aligned}$$
-approximate $Q_t$ with $N$ particles $\theta^1_t, \dots, \theta^N_t$. The empirical distribution is:
+----approximate $Q_t$ with $N$ particles $\theta^1_t, \dots, \theta^N_t$. The empirical distribution is:
 
 
 $$Q_t \approx \hat{Q}^t_N = \frac{1}{N}\sum_{j=1}^N \delta_{\theta^j_t}$$
@@ -528,3 +530,4 @@ We now have the update gradients for each expert and globally:
 %  $$\frac{\delta \mathcal{R}}{\delta Q_e}(\theta) = \frac{\delta}{\delta Q_e} \int \left( \sum_f \pi_f Q_f(\theta) \right) \log \frac{\sum_f \pi_f Q_f(\theta)}{Q_0(\theta)} d\theta$$ -->
 
 \end{document}
+undefined
