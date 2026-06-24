@@ -1,14 +1,16 @@
 %--------------------
 % Packages
 % -------------------
-\documentclass[11pt,a4paper]{article}
+% UNSW Requirement: Master of Statistics
+\documentclass[mstat,12pt]{unswthesis}
 
 % --- Core Typography & Language ---
 \usepackage[T1]{fontenc}
 \usepackage{mathptmx}           % Use Times Font
 \usepackage[australian]{babel}
-\frenchspacing                  % <--- Fixed here (removed \usepackage)
-\linespread{1.2}                % Set linespace
+\frenchspacing
+\linespread{1.25}               % Template requirement for 1.25 spacing
+\usepackage[a4paper, margin = 2.5cm]{geometry} % Template margin requirement
 
 % --- Math Support ---
 \usepackage{amsmath,amssymb,amsfonts,amsthm,mathtools,bbm,bm}
@@ -18,8 +20,8 @@
 \usepackage{xcolor}
 \usepackage{tikz}
 \usepackage{tcolorbox}
-% \usepackage{subcaption}
 \usepackage{subfig}
+\usepackage{afterpage}          % Needed for blank pages in the front matter
 
 % --- Tables & Lists ---
 \usepackage{booktabs}
@@ -28,18 +30,16 @@
 \usepackage{enumitem}
 
 % --- Layout & Typography Tweaks ---
-\usepackage{parskip}
 \usepackage[all]{nowidow}       % Prevents widow/orphan lines
 \usepackage[normalem]{ulem}     % Strikethrough via \sout
-\usepackage{titlesec}
 \usepackage{comment}
 \usepackage{mathrsfs}
 
 % --- Bibliography & Appendices ---
 \usepackage{natbib}
-\bibliographystyle{apalike}
+% \bibliographystyle{apalike}     % Note: The school template defaults to \bibliographystyle{unswthesis}
 \usepackage[toc,page]{appendix}
-\usepackage[preprint]{neurips_2023}
+
 
 % --- Hyperlinks (Load Last) ---
 \usepackage{url}
@@ -49,21 +49,81 @@
     linkcolor=black,
     pdfborder={0 0 0}
 }
-\usepackage{bookmark}           % Improves hyperref bookmark handling
+\usepackage{bookmark}
 
 % --- Custom Commands ---
 \newcommand{\add}[1]{{\color{red}#1}}
 \newcommand{\dele}[1]{{\color{gray}\sout{#1}}}
 
+\newcommand\blankpage{%
+    \null
+    \thispagestyle{empty}%
+    \addtocounter{page}{-1}%
+    \newpage}
 
 
+
+% --- Required UNSW Title Setup ---
+\title{Your Thesis Title Here}
+\authornameonly{Your Full Name}
+\author{\Authornameonly\\{\bigskip}Supervisor: Your Supervisor Name}
+
+% Toggles for required pages
+\copyrightfalse
+\figurespagefalse
+\tablespagefalse
 
 \begin{document}
+
+% Generates the title page and table of contents
+\beforepreface
+\afterpage{\blankpage}
+
+% --- Plagiarism Statement ---
+\prefacesection{Plagiarism statement}
+
+\vskip 10pc \noindent I declare that this thesis is my
+own work, except where acknowledged, and has not been submitted for
+academic credit elsewhere. 
+
+\vskip 2pc  \noindent I acknowledge that the assessor of this
+thesis may, for the purpose of assessing it:
+\begin{itemize}
+\item Reproduce it and provide a copy to another member of the University; and/or,
+\item Communicate a copy of it to a plagiarism checking service (which may then retain a copy of it on its database for the purpose of future plagiarism checking).
+\end{itemize}
+
+\vskip 2pc \noindent I certify that I have read and understood the University Rules in
+respect of Student Academic Misconduct, and am aware of any potential plagiarism penalties which may 
+apply.\vspace{24pt}
+
+\vskip 2pc \noindent By signing 
+this declaration I am
+agreeing to the statements and conditions above.
+\vskip 2pc \noindent
+Signed: \rule{7cm}{0.25pt} \hfill Date: \rule{4cm}{0.25pt} \newline
+\vskip 1pc
+
+\afterpage{\blankpage}
+
+% --- Abstract ---
+\prefacesection{Abstract}
+Write your abstract here.
+\afterpage{\blankpage}
+
+% Finalises the front matter and begins page numbering for chapters
+\afterpreface
+
+% --- Main Content Begins ---
+\afterpage{\blankpage}
+
+\chapter{Literature Review}
+
 \section*{Lit review Overview}
 \begin{enumerate}
     \item \textbf{Foundations of Belief and Updating \& Variational Inference}
           \begin{itemize}
-              \item A general framework for updating belief distributions (Bissiri et al.)
+              \item A general framework for updating belief distributions (Bissiri et al.) \citep{bissiri2016general}
               \item Stochastic Variational Inference
               \item An optimisation-centric view on Bayes' rule: Reviewing and generalising variational inference (Knoblauch et al.)
           \end{itemize}
@@ -84,6 +144,7 @@
           \end{itemize}
     \item \textbf{Variational Inference with Normalising Flows?? Adaptive Heterogeneous Mixtures of Normalising Flows for Robust Variational Inference?? And more MOE papers...}
 \end{enumerate}
+
 \section{Foundations of Belief and Updating \& Variational Inference}
 
 % \dele{In this section we will begin by outlining some of the common notation with further notation introduced in the literature review.
@@ -457,7 +518,7 @@ $$d\theta^i_t = -\left(\nabla v(\theta^i_t) + \frac{1}{N-1}\sum_{j \neq i} \nabl
 
 
 \newpage
-\section{Other notes for later chapters:}
+\chapter{Other notes for later chapters:}
 
 MoE Predictive
 
@@ -526,5 +587,11 @@ We now have the update gradients for each expert and globally:
 \end{align}
 
 %  $$\frac{\delta \mathcal{R}}{\delta Q_e}(\theta) = \frac{\delta}{\delta Q_e} \int \left( \sum_f \pi_f Q_f(\theta) \right) \log \frac{\sum_f \pi_f Q_f(\theta)}{Q_0(\theta)} d\theta$$ -->
+
+% --- Bibliography ---
+\clearpage
+\addcontentsline{toc}{chapter}{References}
+\bibliographystyle{apalike} 
+\bibliography{references}
 
 \end{document}
