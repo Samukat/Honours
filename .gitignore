@@ -52,6 +52,17 @@ htmlcov/
 .vscode/
 .idea/
 
+# LaTeX Auxiliary Files
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
+
 # OS files
 .DS_Store
 Thumbs.db
